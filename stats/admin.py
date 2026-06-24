@@ -67,4 +67,5 @@ class RepresentanteAdmin(admin.ModelAdmin):
     list_display = ['id', 'nombre', 'jugador', 'parentesco', 'es_contacto_emergencia', 'es_agente']
     list_filter = ['es_contacto_emergencia', 'es_agente', 'parentesco']
     search_fields = ['nombre', 'email', 'telefono', 'jugador__nombres', 'jugador__apellidos']
-    raw_id_fields = ['jugador']
+    raw_id_fields = ['jugador'] 
+    
