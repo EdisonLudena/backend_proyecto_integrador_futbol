@@ -5,3 +5,4 @@ from .suscripcion import SuscripcionViewSet
 from .entidad import EntidadViewSet
 from .sede import SedeViewSet
 from .categoria import CategoriaViewSet
+from .posicion import PosicionViewSet

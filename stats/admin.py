@@ -3,6 +3,7 @@ from stats.models.suscripcion import Suscripcion
 from stats.models.entidad import Entidad
 from stats.models.sede import Sede
 from stats.models.categoria import Categoria
+from stats.models.posicion import Posicion
 
 
 @admin.register(Suscripcion)
@@ -37,3 +38,9 @@ class CategoriaAdmin(admin.ModelAdmin):
     list_filter = ['activo', 'genero', 'entidad']
     search_fields = ['nombre']
     raw_id_fields = ['entidad']
+
+@admin.register(Posicion)
+class PosicionAdmin(admin.ModelAdmin):
+    list_display = ['id', 'nombre_posicion', 'abreviatura', 'zona']
+    list_filter = ['zona']
+    search_fields = ['nombre_posicion', 'abreviatura']

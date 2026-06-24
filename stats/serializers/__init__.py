@@ -9,3 +9,4 @@ from .suscripcion import SuscripcionSerializer
 from .entidad import EntidadSerializer
 from .sede import SedeSerializer
 from .categoria import CategoriaSerializer
+from .posicion import PosicionSerializer

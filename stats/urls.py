@@ -9,6 +9,7 @@ from stats.views.suscripcion import SuscripcionViewSet
 from stats.views.entidad import EntidadViewSet
 from stats.views.sede import SedeViewSet
 from stats.views.categoria import CategoriaViewSet
+from stats.views.posicion import PosicionViewSet
 from stats.serializers.auth import CustomTokenView
 
 router = DefaultRouter()
@@ -17,6 +18,7 @@ router.register('subscriptions', SuscripcionViewSet, basename='subscription')
 router.register('entities', EntidadViewSet, basename='entity')
 router.register('sedes', SedeViewSet, basename='sede')
 router.register('categorias', CategoriaViewSet, basename='categoria')
+router.register('positions', PosicionViewSet, basename='position')
 
 urlpatterns = [
     path('health/',             health_check),
