@@ -7,12 +7,16 @@ from stats.views.auth import RegisterView, LogoutView
 from stats.views.user import UserViewSet
 from stats.views.suscripcion import SuscripcionViewSet
 from stats.views.entidad import EntidadViewSet
+from stats.views.sede import SedeViewSet
+from stats.views.categoria import CategoriaViewSet
 from stats.serializers.auth import CustomTokenView
 
 router = DefaultRouter()
 router.register('users', UserViewSet, basename='user')
 router.register('subscriptions', SuscripcionViewSet, basename='subscription')
 router.register('entities', EntidadViewSet, basename='entity')
+router.register('sedes', SedeViewSet, basename='sede')
+router.register('categorias', CategoriaViewSet, basename='categoria')
 
 urlpatterns = [
     path('health/',             health_check),
