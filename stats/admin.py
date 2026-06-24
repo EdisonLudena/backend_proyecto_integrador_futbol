@@ -4,6 +4,8 @@ from stats.models.entidad import Entidad
 from stats.models.sede import Sede
 from stats.models.categoria import Categoria
 from stats.models.posicion import Posicion
+from stats.models.jugador import Jugador
+from stats.models.jugador_posicion import JugadorPosicion
 
 
 @admin.register(Suscripcion)
@@ -44,3 +46,17 @@ class PosicionAdmin(admin.ModelAdmin):
     list_display = ['id', 'nombre_posicion', 'abreviatura', 'zona']
     list_filter = ['zona']
     search_fields = ['nombre_posicion', 'abreviatura']
+
+@admin.register(Jugador)
+class JugadorAdmin(admin.ModelAdmin):
+    list_display = ['id', 'apellidos', 'nombres', 'entidad', 'categoria', 'numero_camiseta', 'estado']
+    list_filter = ['estado', 'pie_dominante', 'entidad', 'categoria']
+    search_fields = ['nombres', 'apellidos', 'documento_identidad']
+    raw_id_fields = ['entidad', 'categoria']
+
+@admin.register(JugadorPosicion)
+class JugadorPosicionAdmin(admin.ModelAdmin):
+    list_display = ['id', 'jugador', 'posicion', 'es_principal']
+    list_filter = ['es_principal', 'posicion__zona']
+    search_fields = ['jugador__nombres', 'jugador__apellidos', 'posicion__nombre_posicion']
+    raw_id_fields = ['jugador', 'posicion']

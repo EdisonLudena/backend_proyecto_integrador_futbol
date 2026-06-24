@@ -10,3 +10,5 @@ from .entidad import EntidadSerializer
 from .sede import SedeSerializer
 from .categoria import CategoriaSerializer
 from .posicion import PosicionSerializer
+from .jugador import JugadorSerializer
+from .jugador_posicion import JugadorPosicionSerializer

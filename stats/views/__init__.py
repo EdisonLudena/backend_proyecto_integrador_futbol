@@ -6,3 +6,5 @@ from .entidad import EntidadViewSet
 from .sede import SedeViewSet
 from .categoria import CategoriaViewSet
 from .posicion import PosicionViewSet
+from .jugador import JugadorViewSet
+from .jugador_posicion import JugadorPosicionViewSet

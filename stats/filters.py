@@ -4,6 +4,8 @@ from stats.models import Suscripcion
 from stats.models.sede import Sede
 from stats.models.categoria import Categoria
 from stats.models.posicion import Posicion
+from stats.models.jugador import Jugador    
+from stats.models.jugador_posicion import JugadorPosicion
 
 class SuscripcionFilter(django_filters.FilterSet):
     referencia_pago = django_filters.CharFilter(lookup_expr='icontains')
@@ -42,3 +44,17 @@ class PosicionFilter(django_filters.FilterSet):
     class Meta:
         model = Posicion
         fields = ['zona']
+
+class JugadorFilter(django_filters.FilterSet):
+    nombres = django_filters.CharFilter(lookup_expr='icontains')
+    apellidos = django_filters.CharFilter(lookup_expr='icontains')
+    documento_identidad = django_filters.CharFilter(lookup_expr='exact')
+
+    class Meta:
+        model = Jugador
+        fields = ['entidad', 'categoria', 'estado', 'pie_dominante']
+
+class JugadorPosicionFilter(django_filters.FilterSet):
+    class Meta:
+        model = JugadorPosicion
+        fields = ['jugador', 'posicion', 'es_principal']

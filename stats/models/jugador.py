@@ -41,6 +41,12 @@ class Jugador(models.Model):
     estado = models.CharField(max_length=20, choices=ESTADOS, default='Activo')
     creado_en = models.DateTimeField(auto_now_add=True)
 
+    posiciones = models.ManyToManyField(
+        'stats.Posicion',
+        through='stats.JugadorPosicion',
+        related_name='jugadores'
+    )
+
     class Meta:
         db_table = 'jugadores'
         verbose_name = 'Jugador'
