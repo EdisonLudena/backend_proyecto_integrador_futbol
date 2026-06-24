@@ -6,6 +6,7 @@ from stats.models.categoria import Categoria
 from stats.models.posicion import Posicion
 from stats.models.jugador import Jugador
 from stats.models.jugador_posicion import JugadorPosicion
+from stats.models.representante import Representante
 
 
 @admin.register(Suscripcion)
@@ -60,3 +61,10 @@ class JugadorPosicionAdmin(admin.ModelAdmin):
     list_filter = ['es_principal', 'posicion__zona']
     search_fields = ['jugador__nombres', 'jugador__apellidos', 'posicion__nombre_posicion']
     raw_id_fields = ['jugador', 'posicion']
+
+@admin.register(Representante)
+class RepresentanteAdmin(admin.ModelAdmin):
+    list_display = ['id', 'nombre', 'jugador', 'parentesco', 'es_contacto_emergencia', 'es_agente']
+    list_filter = ['es_contacto_emergencia', 'es_agente', 'parentesco']
+    search_fields = ['nombre', 'email', 'telefono', 'jugador__nombres', 'jugador__apellidos']
+    raw_id_fields = ['jugador']

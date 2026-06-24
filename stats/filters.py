@@ -6,6 +6,7 @@ from stats.models.categoria import Categoria
 from stats.models.posicion import Posicion
 from stats.models.jugador import Jugador    
 from stats.models.jugador_posicion import JugadorPosicion
+from stats.models.representante import Representante
 
 class SuscripcionFilter(django_filters.FilterSet):
     referencia_pago = django_filters.CharFilter(lookup_expr='icontains')
@@ -58,3 +59,11 @@ class JugadorPosicionFilter(django_filters.FilterSet):
     class Meta:
         model = JugadorPosicion
         fields = ['jugador', 'posicion', 'es_principal']
+
+class RepresentanteFilter(django_filters.FilterSet):
+    nombre = django_filters.CharFilter(lookup_expr='icontains')
+    email = django_filters.CharFilter(lookup_expr='icontains')
+
+    class Meta:
+        model = Representante
+        fields = ['jugador', 'parentesco', 'es_contacto_emergencia', 'es_agente']

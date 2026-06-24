@@ -12,6 +12,7 @@ from stats.views.categoria import CategoriaViewSet
 from stats.views.posicion import PosicionViewSet
 from stats.views.jugador import JugadorViewSet
 from stats.views.jugador_posicion import JugadorPosicionViewSet
+from stats.views.representante import RepresentanteViewSet
 from stats.serializers.auth import CustomTokenView
 
 router = DefaultRouter()
@@ -23,6 +24,7 @@ router.register('categorias', CategoriaViewSet, basename='categoria')
 router.register('positions', PosicionViewSet, basename='position')
 router.register('players', JugadorViewSet, basename='player')
 router.register('player-positions', JugadorPosicionViewSet, basename='player-position')
+router.register('representatives', RepresentanteViewSet, basename='representative')
 
 urlpatterns = [
     path('health/',             health_check),
