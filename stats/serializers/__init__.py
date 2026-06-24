@@ -5,3 +5,5 @@ from .user import (
     UserProfileSerializer,
     ChangePasswordSerializer,
 )
+from .suscripcion import SuscripcionSerializer
+from .entidad import EntidadSerializer
