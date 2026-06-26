@@ -2,10 +2,22 @@ from django.test import TestCase
 from django.db import IntegrityError, transaction
 from django.utils import timezone
 from decimal import Decimal
-from stats.models.user import Usuario
-from stats.models.placeholders import Jugador, ProspectoSeguimiento, Categoria, Sede, Posicion
-from stats.models.scouting import ReporteScouting, MetricaTecnica, MetricaTactica, ValoracionEconomica
-from stats.models.competition import Partido, Alineacion, EventoLive, EvaluacionPostPartido
+from stats.models import (
+    Usuario,
+    Jugador,
+    ProspectoSeguimiento,
+    Categoria,
+    Sede,
+    Posicion,
+    ReporteScouting,
+    MetricaTecnica,
+    MetricaTactica,
+    ValoracionEconomica,
+    Partido,
+    Alineacion,
+    EventoLive,
+    EvaluacionPostPartido,
+)
 
 class FootballModelsTest(TestCase):
     def setUp(self):

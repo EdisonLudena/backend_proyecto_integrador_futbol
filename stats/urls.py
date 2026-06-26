@@ -5,7 +5,21 @@ from stats.views.health import health_check
 from stats.views.auth import RegisterView, LogoutView
 from stats.views.user import UserViewSet
 from stats.serializers.auth import CustomTokenView
-from stats.views.scouting_competition import (JugadorViewSet,ProspectoSeguimientoViewSet,CategoriaViewSet,SedeViewSet,PosicionViewSet,ReporteScoutingViewSet,MetricaTecnicaViewSet,MetricaTacticaViewSet,ValoracionEconomicaViewSet,PartidoViewSet,AlineacionViewSet,EventoLiveViewSet,EvaluacionPostPartidoViewSet)
+from stats.views import (
+    JugadorViewSet,
+    ProspectoSeguimientoViewSet,
+    CategoriaViewSet,
+    SedeViewSet,
+    PosicionViewSet,
+    ReporteScoutingViewSet,
+    MetricaTecnicaViewSet,
+    MetricaTacticaViewSet,
+    ValoracionEconomicaViewSet,
+    PartidoViewSet,
+    AlineacionViewSet,
+    EventoLiveViewSet,
+    EvaluacionPostPartidoViewSet,
+)
 
 
 router = DefaultRouter()
