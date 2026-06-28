@@ -2,6 +2,9 @@ from rest_framework import serializers
 from stats.models.categoria import Categoria
 
 class CategoriaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Categoria
+        fields = '__all__'
     nombre_entidad = serializers.ReadOnlyField(source='entidad.nombre_entidad')
 
     class Meta:

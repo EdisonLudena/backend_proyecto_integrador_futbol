@@ -48,6 +48,8 @@ TEMPLATES = [{
     ]},
 }]
 
+import sys
+
 DATABASES = {
     'default': {
         'ENGINE':   'django.db.backends.postgresql',
@@ -58,6 +60,13 @@ DATABASES = {
         'PORT':     config('DB_PORT', default='5432'),
     }
 }
+
+if 'test' in sys.argv:
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+
 
 LANGUAGE_CODE      = 'es-ec'
 TIME_ZONE          = 'America/Guayaquil'

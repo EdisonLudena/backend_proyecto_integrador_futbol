@@ -3,6 +3,9 @@ from rest_framework import serializers
 from stats.models.jugador import Jugador
 
 class JugadorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Jugador
+        fields = '__all__'
     nombre_entidad = serializers.ReadOnlyField(source='entidad.nombre_entidad')
     nombre_categoria = serializers.ReadOnlyField(source='categoria.nombre')
 

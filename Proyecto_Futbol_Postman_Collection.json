@@ -1,0 +1,695 @@
+{
+	"info": {
+		"_postman_id": "9a38f321-4d1c-4b53-aa24-6a84746f3456",
+		"name": "Proyecto Fútbol API - Scouting y Competición",
+		"description": "Colección de Postman para probar los endpoints del módulo de Scouting, Competición y Autenticación del Proyecto Integrador de Fútbol.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Autenticación (Auth)",
+			"item": [
+				{
+					"name": "Registrar Usuario (Coach/Scout)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"coach_test@futbol.com\",\n    \"nombre_completo\": \"Entrenador de Prueba\",\n    \"tipo_usuario\": \"Coach\",\n    \"password\": \"futbol_pass_123\",\n    \"confirm_password\": \"futbol_pass_123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/register/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Iniciar Sesión (Login)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.access) {",
+									"    pm.environment.set(\"token\", jsonData.access);",
+									"    pm.environment.set(\"refresh_token\", jsonData.refresh);",
+									"}"
+								],
+								"type": "javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"coach_test@futbol.com\",\n    \"password\": \"futbol_pass_123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refrescar Token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refresh\": \"{{refresh_token}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/token/refresh/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"token",
+								"refresh",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. Datos Temporales (Placeholders)",
+			"item": [
+				{
+					"name": "Crear Jugador",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.id) {",
+									"    pm.environment.set(\"jugador_id\", jsonData.id);",
+									"}"
+								],
+								"type": "javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"Lionel Messi\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/jugadores/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"jugadores",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Prospecto de Seguimiento",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.id) {",
+									"    pm.environment.set(\"prospecto_id\", jsonData.id);",
+									"}"
+								],
+								"type": "javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"Lamine Yamal\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/prospectos-seguimiento/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"prospectos-seguimiento",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Categoria",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.id) {",
+									"    pm.environment.set(\"categoria_id\", jsonData.id);",
+									"}"
+								],
+								"type": "javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"Sub-20\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/categorias/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"categorias",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Sede",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.id) {",
+									"    pm.environment.set(\"sede_id\", jsonData.id);",
+									"}"
+								],
+								"type": "javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"Estadio Olímpico Atahualpa\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/sedes/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"sedes",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Posición",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.id) {",
+									"    pm.environment.set(\"posicion_id\", jsonData.id);",
+									"}"
+								],
+								"type": "javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"Extremo Izquierdo\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/posiciones/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"posiciones",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Scouting",
+			"item": [
+				{
+					"name": "Crear Reporte de Scouting",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.id) {",
+									"    pm.environment.set(\"reporte_id\", jsonData.id);",
+									"}"
+								],
+								"type": "javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"usuario\": \"1ef19045-dc59-4817-97d9-dc0637e5bcea\",\n    \"jugador\": \"{{jugador_id}}\",\n    \"valoracion_estrellas\": 4,\n    \"comentario_tecnico\": \"Excelente posicionamiento y visión de juego.\",\n    \"partido_observado\": \"Amistoso Internacional\",\n    \"fecha_reporte\": \"2026-06-22\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/reportes-scouting/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"reportes-scouting",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Registrar Métricas Técnicas",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"reporte\": \"{{reporte_id}}\",\n    \"control\": 85,\n    \"pase_corto\": 90,\n    \"pase_largo\": 78,\n    \"tiro\": 82,\n    \"regate\": 92,\n    \"cabeceo\": 60,\n    \"velocidad\": 88,\n    \"resistencia\": 80\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/metricas-tecnicas/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"metricas-tecnicas",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Registrar Métricas Tácticas",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"reporte\": \"{{reporte_id}}\",\n    \"ubicacion\": 88,\n    \"lectura_juego\": 85,\n    \"sacrificio\": 75,\n    \"liderazgo\": 70,\n    \"presion\": 80,\n    \"trabajo_equipo\": 85\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/metricas-tacticas/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"metricas-tacticas",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Registrar Valoración Económica",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jugador\": \"{{jugador_id}}\",\n    \"valor_estimado\": \"1500000.00\",\n    \"moneda\": \"USD\",\n    \"fecha_valoracion\": \"2026-06-22\",\n    \"metodo_valoracion\": \"Transfermarkt\",\n    \"observaciones\": \"Valoración basada en rendimiento actual y edad del jugador.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/valoracion-economica/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"valoracion-economica",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. Competición",
+			"item": [
+				{
+					"name": "Crear Partido",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.id) {",
+									"    pm.environment.set(\"partido_id\", jsonData.id);",
+									"}"
+								],
+								"type": "javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"categoria\": \"{{categoria_id}}\",\n    \"sede\": \"{{sede_id}}\",\n    \"rival\": \"Liga Deportiva Universitaria\",\n    \"es_local\": true,\n    \"fecha\": \"2026-06-25T16:00:00Z\",\n    \"tipo_partido\": \"Liga\",\n    \"goles_favor\": 0,\n    \"goles_contra\": 0,\n    \"estado_partido\": \"Programado\",\n    \"observaciones\": \"Partido importante por la clasificación.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/partidos/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"partidos",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Alineación del Partido",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"partido\": \"{{partido_id}}\",\n    \"jugador\": \"{{jugador_id}}\",\n    \"es_titular\": true,\n    \"posicion_partido\": \"{{posicion_id}}\",\n    \"minuto_entrada\": 0,\n    \"minuto_salida\": 75\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/alineaciones/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"alineaciones",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Registrar Evento en Vivo",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"partido\": \"{{partido_id}}\",\n    \"jugador\": \"{{jugador_id}}\",\n    \"minuto\": 34,\n    \"tipo_evento\": \"Gol\",\n    \"descripcion\": \"Gol de jugada individual enganchando hacia adentro.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/eventos-live/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"eventos-live",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Evaluación Post Partido",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"partido\": \"{{partido_id}}\",\n    \"jugador\": \"{{jugador_id}}\",\n    \"calificacion\": \"8.5\",\n    \"puntos_positivos\": \"Gran efectividad en pases decisivos y anotación de gol.\",\n    \"puntos_a_mejorar\": \"Falta de repliegue defensivo en minutos finales.\",\n    \"es_visible_jugador\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/evaluacion-post-partido/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"evaluacion-post-partido",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

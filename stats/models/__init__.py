@@ -1,4 +1,17 @@
 from .user import Usuario
+from .jugador import Jugador
+from .prospecto_seguimiento import ProspectoSeguimiento
+from .categoria import Categoria
+from .sede import Sede
+from .posicion import Posicion
+from .reporte_scouting import ReporteScouting
+from .metrica_tecnica import MetricaTecnica
+from .metrica_tactica import MetricaTactica
+from .valoracion_economica import ValoracionEconomica
+from .partido import Partido
+from .alineacion import Alineacion
+from .evento_live import EventoLive
+from .evaluacion_post_partido import EvaluacionPostPartido
 
 from .core import Jugador, Posicion
 from .contrato import ContratoInterno

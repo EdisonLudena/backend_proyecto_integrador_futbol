@@ -1,4 +1,7 @@
 from rest_framework import viewsets
+from rest_framework.permissions import AllowAny
+from stats.models.categoria import Categoria
+from stats.serializers.categoria import CategoriaSerializer
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated
@@ -11,6 +14,7 @@ from stats.pagination import StandardPagination
 class CategoriaViewSet(viewsets.ModelViewSet):
     queryset = Categoria.objects.all()
     serializer_class = CategoriaSerializer
+    permission_classes = [AllowAny]
     permission_classes = [IsAuthenticated]
     pagination_class = StandardPagination
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
