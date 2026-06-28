@@ -2,7 +2,7 @@ import uuid
 from django.db import models
 from django.db.models import Q
 from django.core.validators import MinValueValidator, MaxValueValidator
-from stats.models.jugador import Jugador
+from stats.models import Categoria, Jugador, Sede
 from stats.models.partido import Partido
 
 class EvaluacionPostPartido(models.Model):

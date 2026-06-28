@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from stats.models.prospecto import ProspectoSeguimiento
+
+from stats.models import ProspectoSeguimiento
 
 class ProspectoSeguimientoSerializer(serializers.ModelSerializer):
     class Meta:

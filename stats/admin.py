@@ -1,12 +1,11 @@
 from django.contrib import admin
+
 from stats.models import (
     Jugador, Posicion, ContratoInterno, AntecedentesSalud, 
     HistorialAntropometrico, TestRendimiento, LesionRegistro, 
-    SesionRehabilitacion, PlanAlimenticio, ProspectoSeguimiento
+    SesionRehabilitacion, PlanAlimenticio, ProspectoSeguimiento,
+    Suscripcion, Entidad, Sede, Categoria, JugadorPosicion, Representante
 )
-
-admin.site.register(Jugador)
-admin.site.register(Posicion)
 
 admin.site.register(ContratoInterno)
 admin.site.register(AntecedentesSalud)
@@ -16,15 +15,6 @@ admin.site.register(LesionRegistro)
 admin.site.register(SesionRehabilitacion)
 admin.site.register(PlanAlimenticio)
 admin.site.register(ProspectoSeguimiento)
-from stats.models.suscripcion import Suscripcion
-from stats.models.entidad import Entidad
-from stats.models.sede import Sede
-from stats.models.categoria import Categoria
-from stats.models.posicion import Posicion
-from stats.models.jugador import Jugador
-from stats.models.jugador_posicion import JugadorPosicion
-from stats.models.representante import Representante
-
 
 @admin.register(Suscripcion)
 class SuscripcionAdmin(admin.ModelAdmin):
@@ -84,5 +74,4 @@ class RepresentanteAdmin(admin.ModelAdmin):
     list_display = ['id', 'nombre', 'jugador', 'parentesco', 'es_contacto_emergencia', 'es_agente']
     list_filter = ['es_contacto_emergencia', 'es_agente', 'parentesco']
     search_fields = ['nombre', 'email', 'telefono', 'jugador__nombres', 'jugador__apellidos']
-    raw_id_fields = ['jugador'] 
-    
+    raw_id_fields = ['jugador']

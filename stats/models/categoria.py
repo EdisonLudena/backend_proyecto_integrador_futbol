@@ -2,14 +2,6 @@ import uuid
 from django.db import models
 
 class Categoria(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    nombre = models.CharField(max_length=100, null=True, blank=True)
-
-    class Meta:
-        db_table = 'categorias'
-from stats.models.entidad import Entidad
-
-class Categoria(models.Model):
     GENEROS = [
         ('Masculino', 'Masculino'),
         ('Femenino', 'Femenino'),
@@ -17,11 +9,13 @@ class Categoria(models.Model):
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    
     entidad = models.ForeignKey(
-        Entidad, 
+        'stats.Entidad', 
         on_delete=models.CASCADE, 
         related_name='categorias'
     )
+    
     nombre = models.CharField(max_length=100)
     edad_minima = models.SmallIntegerField(blank=True, null=True)
     edad_maxima = models.SmallIntegerField(blank=True, null=True)

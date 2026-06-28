@@ -1,9 +1,9 @@
 from .user import Usuario
-from .jugador import Jugador
-from .prospecto_seguimiento import ProspectoSeguimiento
+from .jugador import Jugador  
+from .prospecto import ProspectoSeguimiento
 from .categoria import Categoria
 from .sede import Sede
-from .posicion import Posicion
+from .posicion import Posicion 
 from .reporte_scouting import ReporteScouting
 from .metrica_tecnica import MetricaTecnica
 from .metrica_tactica import MetricaTactica
@@ -12,31 +12,41 @@ from .partido import Partido
 from .alineacion import Alineacion
 from .evento_live import EventoLive
 from .evaluacion_post_partido import EvaluacionPostPartido
-
-from .core import Jugador, Posicion
 from .contrato import ContratoInterno
 from .salud import AntecedentesSalud
 from .antropometria import HistorialAntropometrico
 from .rendimiento import TestRendimiento
 from .lesion import LesionRegistro, SesionRehabilitacion
 from .dieta import PlanAlimenticio
-from .prospecto import ProspectoSeguimiento
-
-__all__ = [
-    'Jugador', 'Posicion',
-    'ContratoInterno', 'AntecedentesSalud', 'HistorialAntropometrico',
-    'TestRendimiento', 'LesionRegistro', 'SesionRehabilitacion',
-    'PlanAlimenticio', 'ProspectoSeguimiento'
 from .suscripcion import Suscripcion
 from .entidad import Entidad
-from .sede import Sede
-from .categoria import Categoria
-from .posicion import Posicion
-from .jugador import Jugador
 from .jugador_posicion import JugadorPosicion
 from .representante import Representante
 
 __all__ = [
-    'Usuario', 'Suscripcion', 'Entidad', 'Sede', 'Categoria', 
-    'Posicion', 'Jugador', 'JugadorPosicion', 'Representante'
+    'Usuario', 
+    'Jugador', 
+    'ProspectoSeguimiento', 
+    'Categoria', 
+    'Sede', 
+    'Posicion', 
+    'ReporteScouting', 
+    'MetricaTecnica', 
+    'MetricaTactica', 
+    'ValoracionEconomica', 
+    'Partido', 
+    'Alineacion', 
+    'EventoLive', 
+    'EvaluacionPostPartido', 
+    'ContratoInterno', 
+    'AntecedentesSalud', 
+    'HistorialAntropometrico', 
+    'TestRendimiento', 
+    'LesionRegistro', 
+    'SesionRehabilitacion', 
+    'PlanAlimenticio', 
+    'Suscripcion', 
+    'Entidad', 
+    'JugadorPosicion', 
+    'Representante'
 ]

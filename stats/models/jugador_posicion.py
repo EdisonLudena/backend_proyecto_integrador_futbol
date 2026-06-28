@@ -1,6 +1,6 @@
 import uuid
 from django.db import models
-from stats.models.jugador import Jugador
+from stats.models import Categoria, Jugador, Sede
 from stats.models.posicion import Posicion
 
 class JugadorPosicion(models.Model):

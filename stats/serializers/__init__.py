@@ -1,7 +1,6 @@
 from .auth import CustomTokenSerializer, CustomTokenView
 from .user import RegisterSerializer,UserSerializer,UserProfileSerializer,ChangePasswordSerializer
 from .jugador import JugadorSerializer
-from .prospecto_seguimiento import ProspectoSeguimientoSerializer
 from .categoria import CategoriaSerializer
 from .sede import SedeSerializer
 from .posicion import PosicionSerializer

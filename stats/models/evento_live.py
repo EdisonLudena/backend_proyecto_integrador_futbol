@@ -1,7 +1,7 @@
 import uuid
 from django.db import models
 from django.db.models import Q
-from stats.models.jugador import Jugador
+from stats.models import Categoria, Jugador, Sede
 from stats.models.partido import Partido
 
 class EventoLive(models.Model):

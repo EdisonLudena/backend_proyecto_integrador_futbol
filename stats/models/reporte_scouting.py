@@ -4,8 +4,8 @@ from django.db import models
 from django.db.models import Q
 from django.core.validators import MinValueValidator, MaxValueValidator
 from stats.models.user import Usuario
-from stats.models.jugador import Jugador
-from stats.models.prospecto_seguimiento import ProspectoSeguimiento
+from stats.models import Categoria, Jugador, Sede
+from .prospecto import ProspectoSeguimiento
 
 class ReporteScouting(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

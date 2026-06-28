@@ -1,7 +1,7 @@
 import uuid
 import datetime
 from django.db import models
-from stats.models.jugador import Jugador
+from stats.models import Categoria, Jugador, Sede
 
 class ValoracionEconomica(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

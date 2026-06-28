@@ -2,15 +2,6 @@ import uuid
 from django.db import models
 
 class Jugador(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    nombre = models.CharField(max_length=100, null=True, blank=True)
-
-    class Meta:
-        db_table = 'jugadores'
-from stats.models.entidad import Entidad
-from stats.models.categoria import Categoria
-
-class Jugador(models.Model):
     PIES_DOMINANTES = [
         ('Derecho', 'Derecho'),
         ('Izquierdo', 'Izquierdo'),
@@ -25,18 +16,21 @@ class Jugador(models.Model):
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    
     entidad = models.ForeignKey(
-        Entidad, 
+        'stats.Entidad', 
         on_delete=models.CASCADE, 
         related_name='jugadores'
     )
+    
     categoria = models.ForeignKey(
-        Categoria, 
+        'stats.Categoria', 
         on_delete=models.SET_NULL, 
         related_name='jugadores', 
         blank=True, 
         null=True
     )
+    
     nombres = models.CharField(max_length=100)
     apellidos = models.CharField(max_length=100)
     fecha_nacimiento = models.DateField()
@@ -48,6 +42,7 @@ class Jugador(models.Model):
     estado = models.CharField(max_length=20, choices=ESTADOS, default='Activo')
     creado_en = models.DateTimeField(auto_now_add=True)
 
+   
     posiciones = models.ManyToManyField(
         'stats.Posicion',
         through='stats.JugadorPosicion',
