@@ -1,10 +1,11 @@
 from django.contrib import admin
-
 from stats.models import (
-    Jugador, Posicion, ContratoInterno, AntecedentesSalud, 
-    HistorialAntropometrico, TestRendimiento, LesionRegistro, 
-    SesionRehabilitacion, PlanAlimenticio, ProspectoSeguimiento,
-    Suscripcion, Entidad, Sede, Categoria, JugadorPosicion, Representante
+    Usuario, Jugador, ProspectoSeguimiento, Categoria, Sede, Posicion, 
+    ReporteScouting, MetricaTecnica, MetricaTactica, ValoracionEconomica, 
+    Partido, Alineacion, EventoLive, EvaluacionPostPartido, ContratoInterno, 
+    AntecedentesSalud, HistorialAntropometrico, TestRendimiento, LesionRegistro, 
+    SesionRehabilitacion, PlanAlimenticio, Suscripcion, Entidad, 
+    JugadorPosicion, Representante
 )
 
 admin.site.register(ContratoInterno)
@@ -15,6 +16,16 @@ admin.site.register(LesionRegistro)
 admin.site.register(SesionRehabilitacion)
 admin.site.register(PlanAlimenticio)
 admin.site.register(ProspectoSeguimiento)
+
+admin.site.register(Usuario)
+admin.site.register(ReporteScouting)
+admin.site.register(MetricaTecnica)
+admin.site.register(MetricaTactica)
+admin.site.register(ValoracionEconomica)
+admin.site.register(Partido)
+admin.site.register(Alineacion)
+admin.site.register(EventoLive)
+admin.site.register(EvaluacionPostPartido)
 
 @admin.register(Suscripcion)
 class SuscripcionAdmin(admin.ModelAdmin):
