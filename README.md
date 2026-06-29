@@ -1,16 +1,18 @@
-# ⚽ Fútbol Stats API
+# Fútbol Stats API
 
 API REST para la gestión de estadísticas de fútbol: jugadores, partidos, métricas técnicas y tácticas, scouting, salud y más.
 
 ---
 
-## 👥 Integrantes
+## Integrantes
 
 - Edison Ludena
+- Danna González
+- Santiago Colimba
 
 ---
 
-## 📋 Descripción del sistema
+## Descripción del sistema
 
 Fútbol Stats API es un backend desarrollado con **Django REST Framework** que permite a entidades deportivas (clubes, academias) gestionar información completa de sus jugadores y cuerpo técnico. El sistema ofrece:
 
@@ -24,7 +26,7 @@ Fútbol Stats API es un backend desarrollado con **Django REST Framework** que p
 
 ---
 
-## 🚀 Instalación local
+## Instalación local
 
 ### 1. Clonar el repositorio
 
@@ -91,7 +93,7 @@ La API estará disponible en `http://localhost:8000/api/`
 
 ---
 
-## ☁️ Despliegue en producción (Azure VM)
+## Despliegue en producción (Azure VM)
 
 ### Requisitos previos
 
@@ -204,7 +206,7 @@ sudo systemctl enable nginx
 
 ---
 
-## 🔐 Uso de la API
+## Uso de la API
 
 ### Obtención de token JWT
 
@@ -272,11 +274,11 @@ curl -X POST http://localhost:8000/api/auth/token/refresh/ \
 
 ---
 
-## 📡 Endpoints
+## Endpoints
 
 Todos los endpoints usan el prefijo `/api/`. Los endpoints protegidos requieren el header `Authorization: Bearer <token>`.
 
-### 🔑 Autenticación
+### Autenticación
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
@@ -287,7 +289,7 @@ Todos los endpoints usan el prefijo `/api/`. Los endpoints protegidos requieren 
 | `POST` | `/api/auth/token/refresh/` | Refrescar access token |
 | `POST` | `/api/auth/token/verify/` | Verificar token |
 
-### 👤 Usuarios
+### Usuarios
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
@@ -296,7 +298,7 @@ Todos los endpoints usan el prefijo `/api/`. Los endpoints protegidos requieren 
 | `PATCH` | `/api/users/{id}/` | Actualizar usuario |
 | `DELETE` | `/api/users/{id}/` | Eliminar usuario |
 
-### 💳 Suscripciones
+### Suscripciones
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
@@ -316,7 +318,7 @@ Todos los endpoints usan el prefijo `/api/`. Los endpoints protegidos requieren 
 | `PUT` | `/api/entidades/{id}/` | Actualizar entidad |
 | `DELETE` | `/api/entidades/{id}/` | Eliminar entidad |
 
-### 📍 Sedes
+### Sedes
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
@@ -326,7 +328,7 @@ Todos los endpoints usan el prefijo `/api/`. Los endpoints protegidos requieren 
 | `PATCH` | `/api/sedes/{id}/` | Actualizar sede |
 | `DELETE` | `/api/sedes/{id}/` | Eliminar sede |
 
-### 🏷️ Categorías
+### Categorías
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
@@ -336,7 +338,7 @@ Todos los endpoints usan el prefijo `/api/`. Los endpoints protegidos requieren 
 | `PATCH` | `/api/categorias/{id}/` | Actualizar categoría |
 | `DELETE` | `/api/categorias/{id}/` | Eliminar categoría |
 
-### 🎯 Posiciones
+### Posiciones
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
@@ -346,7 +348,7 @@ Todos los endpoints usan el prefijo `/api/`. Los endpoints protegidos requieren 
 | `PATCH` | `/api/posiciones/{id}/` | Actualizar posición |
 | `DELETE` | `/api/posiciones/{id}/` | Eliminar posición |
 
-### ⚽ Jugadores
+### Jugadores
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
@@ -356,14 +358,14 @@ Todos los endpoints usan el prefijo `/api/`. Los endpoints protegidos requieren 
 | `PATCH` | `/api/jugadores/{id}/` | Actualizar jugador |
 | `DELETE` | `/api/jugadores/{id}/` | Eliminar jugador |
 
-### 🔗 Jugador-Posiciones
+### Jugador-Posiciones
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
 | `POST` | `/api/jugador-posiciones/` | Asignar posición a jugador |
 | `GET` | `/api/jugador-posiciones/` | Listar relaciones |
 
-### 🤝 Representantes
+### Representantes
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
@@ -373,7 +375,7 @@ Todos los endpoints usan el prefijo `/api/`. Los endpoints protegidos requieren 
 | `PATCH` | `/api/representantes/{id}/` | Actualizar representante |
 | `DELETE` | `/api/representantes/{id}/` | Eliminar representante |
 
-### 🔍 Prospectos Scouting
+### Prospectos Scouting
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
@@ -383,7 +385,7 @@ Todos los endpoints usan el prefijo `/api/`. Los endpoints protegidos requieren 
 | `PATCH` | `/api/prospectos-seguimiento/{id}/` | Actualizar prospecto |
 | `DELETE` | `/api/prospectos-seguimiento/{id}/` | Eliminar prospecto |
 
-### 📋 Reportes Scouting
+### Reportes Scouting
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
@@ -393,7 +395,7 @@ Todos los endpoints usan el prefijo `/api/`. Los endpoints protegidos requieren 
 | `PATCH` | `/api/reportes-scouting/{id}/` | Actualizar reporte |
 | `DELETE` | `/api/reportes-scouting/{id}/` | Eliminar reporte |
 
-### 🎯 Métricas Técnicas
+### Métricas Técnicas
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
@@ -403,7 +405,7 @@ Todos los endpoints usan el prefijo `/api/`. Los endpoints protegidos requieren 
 | `PATCH` | `/api/metricas-tecnicas/{id}/` | Actualizar métrica |
 | `DELETE` | `/api/metricas-tecnicas/{id}/` | Eliminar métrica |
 
-### 🧠 Métricas Tácticas
+### Métricas Tácticas
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
@@ -413,7 +415,7 @@ Todos los endpoints usan el prefijo `/api/`. Los endpoints protegidos requieren 
 | `PATCH` | `/api/metricas-tacticas/{id}/` | Actualizar métrica |
 | `DELETE` | `/api/metricas-tacticas/{id}/` | Eliminar métrica |
 
-### 💰 Valoración Económica
+### Valoración Económica
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
@@ -423,7 +425,7 @@ Todos los endpoints usan el prefijo `/api/`. Los endpoints protegidos requieren 
 | `PATCH` | `/api/valoracion-economica/{id}/` | Actualizar valoración |
 | `DELETE` | `/api/valoracion-economica/{id}/` | Eliminar valoración |
 
-### 🏆 Partidos
+### Partidos
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
@@ -433,7 +435,7 @@ Todos los endpoints usan el prefijo `/api/`. Los endpoints protegidos requieren 
 | `PATCH` | `/api/partidos/{id}/` | Actualizar partido |
 | `DELETE` | `/api/partidos/{id}/` | Eliminar partido |
 
-### 📝 Alineaciones
+### Alineaciones
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
@@ -443,7 +445,7 @@ Todos los endpoints usan el prefijo `/api/`. Los endpoints protegidos requieren 
 | `PATCH` | `/api/alineaciones/{id}/` | Actualizar alineación |
 | `DELETE` | `/api/alineaciones/{id}/` | Eliminar alineación |
 
-### ⚡ Eventos Live
+### Eventos Live
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
@@ -453,7 +455,7 @@ Todos los endpoints usan el prefijo `/api/`. Los endpoints protegidos requieren 
 | `PATCH` | `/api/eventos-live/{id}/` | Actualizar evento |
 | `DELETE` | `/api/eventos-live/{id}/` | Eliminar evento |
 
-### 📊 Evaluación Post-Partido
+### Evaluación Post-Partido
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
@@ -463,7 +465,7 @@ Todos los endpoints usan el prefijo `/api/`. Los endpoints protegidos requieren 
 | `PATCH` | `/api/evaluacion-post-partido/{id}/` | Actualizar evaluación |
 | `DELETE` | `/api/evaluacion-post-partido/{id}/` | Eliminar evaluación |
 
-### 📄 Contratos
+### Contratos
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
@@ -473,7 +475,7 @@ Todos los endpoints usan el prefijo `/api/`. Los endpoints protegidos requieren 
 | `PATCH` | `/api/contratos/{id}/` | Actualizar contrato |
 | `DELETE` | `/api/contratos/{id}/` | Eliminar contrato |
 
-### 🏥 Salud
+### Salud
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
@@ -483,7 +485,7 @@ Todos los endpoints usan el prefijo `/api/`. Los endpoints protegidos requieren 
 | `PATCH` | `/api/salud/{id}/` | Actualizar registro |
 | `DELETE` | `/api/salud/{id}/` | Eliminar registro |
 
-### 📏 Antropometría
+### Antropometría
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
@@ -493,7 +495,7 @@ Todos los endpoints usan el prefijo `/api/`. Los endpoints protegidos requieren 
 | `PATCH` | `/api/antropometria/{id}/` | Actualizar medición |
 | `DELETE` | `/api/antropometria/{id}/` | Eliminar medición |
 
-### 🏃 Rendimiento
+### Rendimiento
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
@@ -503,7 +505,7 @@ Todos los endpoints usan el prefijo `/api/`. Los endpoints protegidos requieren 
 | `PATCH` | `/api/rendimiento/{id}/` | Actualizar test |
 | `DELETE` | `/api/rendimiento/{id}/` | Eliminar test |
 
-### 🩹 Lesiones
+### Lesiones
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
@@ -513,7 +515,7 @@ Todos los endpoints usan el prefijo `/api/`. Los endpoints protegidos requieren 
 | `PATCH` | `/api/lesiones/{id}/` | Actualizar lesión |
 | `DELETE` | `/api/lesiones/{id}/` | Eliminar lesión |
 
-### 💪 Rehabilitación
+### Rehabilitación
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
@@ -523,7 +525,7 @@ Todos los endpoints usan el prefijo `/api/`. Los endpoints protegidos requieren 
 | `PATCH` | `/api/rehabilitacion/{id}/` | Actualizar plan |
 | `DELETE` | `/api/rehabilitacion/{id}/` | Eliminar plan |
 
-### 🥗 Dietas
+### Dietas
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
@@ -535,7 +537,7 @@ Todos los endpoints usan el prefijo `/api/`. Los endpoints protegidos requieren 
 
 ---
 
-## 🛠️ Stack tecnológico
+## Stack tecnológico
 
 - **Backend:** Python 3.12, Django 5, Django REST Framework
 - **Base de datos:** PostgreSQL 16
@@ -548,7 +550,7 @@ Todos los endpoints usan el prefijo `/api/`. Los endpoints protegidos requieren 
 
 ---
 
-## 🔄 CI/CD
+## CI/CD
 
 El proyecto usa GitHub Actions para correr los tests automáticamente en cada push y desplegar en la VM cuando los tests pasan en la rama `main`.
 
