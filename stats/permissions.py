@@ -10,7 +10,7 @@ class IsStaffOrReadOnly(BasePermission):
         return bool(request.user and request.user.is_staff)
     
 class HasPremiumSubscription(BasePermission):
-    def has_permission(self, request, view):
+    def has_permission(self, request, view):    
         # 1. El usuario debe estar autenticado
         if not request.user or not request.user.is_authenticated:
             return False
@@ -22,3 +22,14 @@ class HasPremiumSubscription(BasePermission):
             estado='Activo',
             fecha_vencimiento__gte=timezone.now().date()
         ).exists()
+    
+class IsCoach(BasePermission):
+    """Solo usuarios con tipo_usuario == 'Coach' pueden escribir."""
+    message = 'Solo los usuarios de tipo Coach pueden realizar esta acción.'
+
+    def has_permission(self, request, view):
+        if not request.user or not request.user.is_authenticated:
+            return False
+        if request.method in SAFE_METHODS:
+            return True  # GET, HEAD, OPTIONS: cualquier autenticado puede
+        return request.user.tipo_usuario == 'Coach'

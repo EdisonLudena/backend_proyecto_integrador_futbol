@@ -17,6 +17,6 @@ class SedeSerializer(serializers.ModelSerializer):
         read_only_fields = ['id']
 
     def validate_capacidad(self, value):
-        if value is not NULL and value < 0:
+        if value is not None and value < 0:
             raise serializers.ValidationError('La capacidad de la sede no puede ser un número negativo.')
         return value

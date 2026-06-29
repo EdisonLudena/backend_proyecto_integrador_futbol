@@ -9,12 +9,12 @@ from stats.models.entidad import Entidad
 from stats.serializers.entidad import EntidadSerializer
 from stats.filters import EntidadFilter
 from stats.pagination import StandardPagination
-from rest_framework.permissions import IsAuthenticated
+from stats.permissions import IsCoach
 
 class EntidadViewSet(viewsets.ModelViewSet):
     queryset = Entidad.objects.all()
     serializer_class = EntidadSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsCoach]
     pagination_class = StandardPagination
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = EntidadFilter

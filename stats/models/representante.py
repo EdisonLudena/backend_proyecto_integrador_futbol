@@ -1,12 +1,13 @@
 import uuid
 from django.db import models
-from stats.models import Categoria, Jugador, Sede
+from stats.models.jugador import Jugador
+
 
 class Representante(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     jugador = models.ForeignKey(
-        Jugador, 
-        on_delete=models.CASCADE, 
+        Jugador,
+        on_delete=models.CASCADE,
         related_name='representantes'
     )
     nombre = models.CharField(max_length=150)

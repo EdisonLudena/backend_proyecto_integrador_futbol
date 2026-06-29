@@ -1,10 +1,9 @@
-import uuid
 from django.db import models
-from stats.models import Categoria, Jugador, Sede
+from stats.models.jugador import Jugador
 from stats.models.posicion import Posicion
 
+
 class JugadorPosicion(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     jugador = models.ForeignKey(Jugador, on_delete=models.CASCADE, related_name='posiciones_asignadas')
     posicion = models.ForeignKey(Posicion, on_delete=models.CASCADE, related_name='jugadores_asignados')
     es_principal = models.BooleanField(default=False)

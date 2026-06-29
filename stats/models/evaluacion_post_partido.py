@@ -2,15 +2,16 @@ import uuid
 from django.db import models
 from django.db.models import Q
 from django.core.validators import MinValueValidator, MaxValueValidator
-from stats.models import Categoria, Jugador, Sede
+from stats.models.jugador import Jugador
 from stats.models.partido import Partido
+
 
 class EvaluacionPostPartido(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     partido = models.ForeignKey(Partido, on_delete=models.CASCADE, related_name='evaluaciones_post_partido', db_column='partido_id')
     jugador = models.ForeignKey(Jugador, on_delete=models.CASCADE, related_name='evaluaciones_post_partido', db_column='jugador_id')
     calificacion = models.DecimalField(
-        max_digits=3, 
+        max_digits=3,
         decimal_places=1,
         validators=[MinValueValidator(1.0), MaxValueValidator(10.0)]
     )

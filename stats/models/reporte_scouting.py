@@ -4,15 +4,15 @@ from django.db import models
 from django.db.models import Q
 from django.core.validators import MinValueValidator, MaxValueValidator
 from stats.models.user import Usuario
-from stats.models import Categoria, Jugador, Sede
-from .prospecto import ProspectoSeguimiento
+from stats.models.jugador import Jugador
+from stats.models.prospecto import ProspectoSeguimiento
+
 
 class ReporteScouting(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='reportes_scouting', db_column='usuario_id')
     jugador = models.ForeignKey(Jugador, on_delete=models.CASCADE, null=True, blank=True, related_name='reportes_scouting', db_column='jugador_id')
     prospecto = models.ForeignKey(ProspectoSeguimiento, on_delete=models.CASCADE, null=True, blank=True, related_name='reportes_scouting', db_column='prospecto_id')
-    
     valoracion_estrellas = models.SmallIntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(5)]
     )

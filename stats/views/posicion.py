@@ -9,7 +9,7 @@ from stats.models.posicion import Posicion
 from stats.serializers.posicion import PosicionSerializer
 from stats.filters import PosicionFilter
 from stats.pagination import StandardPagination
-from stats.permissions import IsStaffOrReadOnly  # <-- Tu clase de permisos personalizados
+from stats.permissions import IsStaffOrReadOnly  
 
 class PosicionViewSet(viewsets.ModelViewSet):
     queryset = Posicion.objects.all()

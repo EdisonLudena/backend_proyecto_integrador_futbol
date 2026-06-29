@@ -1,8 +1,9 @@
 import uuid
 from django.db import models
 from django.db.models import Q
-from stats.models import Categoria, Jugador, Sede
+from stats.models.jugador import Jugador
 from stats.models.partido import Partido
+
 
 class EventoLive(models.Model):
     TIPO_EVENTO_CHOICES = [
@@ -16,7 +17,7 @@ class EventoLive(models.Model):
         ('Penalti fallado', 'Penalti fallado'),
         ('Cambio entrada', 'Cambio entrada'),
         ('Cambio salida', 'Cambio salida'),
-        ('Lesion', 'Lesion')
+        ('Lesion', 'Lesion'),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

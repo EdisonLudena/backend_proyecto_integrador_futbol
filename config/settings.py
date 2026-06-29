@@ -1,5 +1,6 @@
 # config/settings.py
 from datetime import timedelta
+import os
 from pathlib import Path
 from decouple import config, Csv
 
@@ -105,3 +106,5 @@ SIMPLE_JWT = {
 CORS_ALLOW_ALL_ORIGINS = config('CORS_ALLOW_ALL_ORIGINS', default=False, cast=bool)
 
 AUTH_USER_MODEL = 'stats.Usuario'
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
