@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'django_filters',
     'corsheaders',
     'stats',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -90,6 +91,15 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'stats.pagination.StandardPagination',
     'PAGE_SIZE': 10,
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {  
+    'TITLE': 'Backend Proyecto Integrador Fútbol',
+    'DESCRIPTION': 'API REST para gestión integral de entidades deportivas de fútbol.',
+    'VERSION': '1.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'COMPONENT_SPLIT_REQUEST': True,
 }
 
 SIMPLE_JWT = {

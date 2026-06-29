@@ -1,0 +1,2131 @@
+openapi: 3.0.3
+info:
+  title: Backend Proyecto Integrador Fútbol
+  description: |
+    API REST para gestión integral de entidades deportivas de fútbol.
+    Cubre autenticación, jugadores, partidos, scouting, salud y rendimiento.
+  version: "1.0"
+servers:
+  - url:  http://localhost:8000/api
+    description: Desarrollo local
+
+tags:
+  - name: Auth
+    description: Registro, login y gestión de sesiones
+  - name: Users
+    description: Gestión de usuarios (solo admin)
+  - name: Suscripciones
+    description: Planes de suscripción
+  - name: Entidades
+    description: Clubes / organizaciones deportivas
+  - name: Sedes
+    description: Instalaciones de las entidades
+  - name: Categorías
+    description: Categorías y divisiones de un club
+  - name: Posiciones
+    description: Catálogo de posiciones de juego
+  - name: Jugadores
+    description: Registro y gestión de jugadores
+  - name: Jugador-Posiciones
+    description: Asignación de posiciones a jugadores
+  - name: Representantes
+    description: Agentes y contactos de emergencia de jugadores
+  - name: Partidos
+    description: Programación y resultados de partidos
+  - name: Alineaciones
+    description: Participación de jugadores en un partido
+  - name: Eventos Live
+    description: Eventos en tiempo real durante un partido
+  - name: Evaluación Post-Partido
+    description: Calificación de jugadores tras el partido
+  - name: Scouting
+    description: Prospectos y reportes de scouting
+  - name: Métricas Técnicas
+    description: Puntuación técnica individual por reporte
+  - name: Métricas Tácticas
+    description: Puntuación táctica individual por reporte
+  - name: Valoración Económica
+    description: Historial de valor de mercado de jugadores
+  - name: Contratos
+    description: Contratos internos de jugadores
+  - name: Salud
+    description: Antecedentes de salud de jugadores
+  - name: Antropometría
+    description: Historial antropométrico (peso, talla, IMC)
+  - name: Rendimiento
+    description: Tests físicos de rendimiento
+  - name: Lesiones
+    description: Registro de lesiones
+  - name: Rehabilitación
+    description: Sesiones de rehabilitación vinculadas a lesiones
+  - name: Dietas
+    description: Planes alimenticios de jugadores
+  - name: Health
+    description: Estado del servicio
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    # ── Auth ───────────────────────────────────────────────
+    RegisterRequest:
+      type: object
+      required: [email, nombre_completo, tipo_usuario, password]
+      properties:
+        email: { type: string, format: email }
+        nombre_completo: { type: string, maxLength: 150 }
+        tipo_usuario:
+          type: string
+          enum: [Coach, Scout, Player]
+        password: { type: string, format: password }
+
+    AuthResponse:
+      type: object
+      properties:
+        access: { type: string }
+        refresh: { type: string }
+        user_id: { type: string, format: uuid }
+        email: { type: string }
+        nombre_completo: { type: string }
+        tipo_usuario: { type: string }
+        is_staff: { type: boolean }
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, format: password }
+
+    TokenRefreshRequest:
+      type: object
+      required: [refresh]
+      properties:
+        refresh: { type: string }
+
+    TokenRefreshResponse:
+      type: object
+      properties:
+        access: { type: string }
+
+    LogoutRequest:
+      type: object
+      required: [refresh]
+      properties:
+        refresh: { type: string }
+
+    # ── Users ──────────────────────────────────────────────
+    Usuario:
+      type: object
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        email: { type: string, format: email }
+        nombre_completo: { type: string, maxLength: 150 }
+        tipo_usuario:
+          type: string
+          enum: [Coach, Scout, Player]
+        estado:
+          type: string
+          enum: [Activo, Inactivo, Suspendido]
+        fecha_registro: { type: string, format: date-time, readOnly: true }
+        ultimo_login: { type: string, format: date-time, nullable: true }
+        idioma: { type: string, default: es }
+        unidad_medida:
+          type: string
+          enum: [Metrico, Imperial]
+        notificaciones_activas: { type: boolean }
+        is_staff: { type: boolean }
+        is_active: { type: boolean }
+
+    ChangePasswordRequest:
+      type: object
+      required: [old_password, new_password]
+      properties:
+        old_password: { type: string }
+        new_password: { type: string }
+
+    UserStats:
+      type: object
+      properties:
+        total: { type: integer }
+        active: { type: integer }
+        inactive: { type: integer }
+        staff: { type: integer }
+
+    # ── Suscripcion ────────────────────────────────────────
+    Suscripcion:
+      type: object
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        usuario: { type: string, format: uuid }
+        email_usuario: { type: string, readOnly: true }
+        plan:
+          type: string
+          enum: [Basico, Premium]
+        estado:
+          type: string
+          enum: [Activo, Cancelado, Vencido, Suspendido]
+        fecha_inicio: { type: string, format: date, readOnly: true }
+        fecha_vencimiento: { type: string, format: date }
+        metodo_pago: { type: string, nullable: true }
+        referencia_pago: { type: string, nullable: true }
+        creado_en: { type: string, format: date-time, readOnly: true }
+
+    SuscripcionStats:
+      type: object
+      properties:
+        total_suscripciones: { type: integer }
+        activas: { type: integer }
+        canceladas: { type: integer }
+        vencidas: { type: integer }
+        premium: { type: integer }
+        basico: { type: integer }
+
+    # ── Entidad ────────────────────────────────────────────
+    Entidad:
+      type: object
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        usuario: { type: string, format: uuid }
+        email_creador: { type: string, readOnly: true }
+        nombre_entidad: { type: string, maxLength: 150 }
+        logo_url: { type: string, nullable: true }
+        ciudad: { type: string, nullable: true }
+        pais: { type: string, default: Ecuador }
+        telefono_contacto: { type: string, nullable: true }
+        estado:
+          type: string
+          enum: [Activo, Inactivo]
+        creado_en: { type: string, format: date-time, readOnly: true }
+
+    EntidadStats:
+      type: object
+      properties:
+        total_entidades: { type: integer }
+        activas: { type: integer }
+        inactivas: { type: integer }
+        top_ciudades:
+          type: array
+          items:
+            type: object
+            properties:
+              ciudad: { type: string }
+              total: { type: integer }
+
+    # ── Sede ───────────────────────────────────────────────
+    Sede:
+      type: object
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        entidad: { type: string, format: uuid }
+        nombre_entidad: { type: string, readOnly: true }
+        nombre_sede: { type: string, maxLength: 150 }
+        direccion: { type: string, nullable: true }
+        latitud: { type: number, format: double, nullable: true }
+        longitud: { type: number, format: double, nullable: true }
+        capacidad: { type: integer, nullable: true }
+        tipo_superficie: { type: string, nullable: true }
+
+    # ── Categoria ──────────────────────────────────────────
+    Categoria:
+      type: object
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        entidad: { type: string, format: uuid }
+        nombre_entidad: { type: string, readOnly: true }
+        nombre: { type: string, maxLength: 100 }
+        edad_minima: { type: integer, nullable: true }
+        edad_maxima: { type: integer, nullable: true }
+        genero:
+          type: string
+          enum: [Masculino, Femenino, Mixto]
+        activo: { type: boolean, default: true }
+
+    # ── Posicion ───────────────────────────────────────────
+    Posicion:
+      type: object
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        nombre_posicion: { type: string, maxLength: 80 }
+        abreviatura: { type: string, maxLength: 10, nullable: true }
+        zona:
+          type: string
+          enum: [Porteria, Defensa, Mediocampo, Ataque]
+
+    # ── Jugador ────────────────────────────────────────────
+    Jugador:
+      type: object
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        entidad: { type: string, format: uuid }
+        nombre_entidad: { type: string, readOnly: true }
+        categoria: { type: string, format: uuid, nullable: true }
+        nombre_categoria: { type: string, readOnly: true, nullable: true }
+        nombres: { type: string, maxLength: 100 }
+        apellidos: { type: string, maxLength: 100 }
+        fecha_nacimiento: { type: string, format: date }
+        foto_url: { type: string, format: uri, nullable: true }
+        numero_camiseta: { type: integer, minimum: 1, maximum: 99, nullable: true }
+        pie_dominante:
+          type: string
+          enum: [Derecho, Izquierdo, Ambidiestro]
+        nacionalidad: { type: string, nullable: true }
+        documento_identidad: { type: string, nullable: true }
+        estado:
+          type: string
+          enum: [Activo, Lesionado, Suspendido, Inactivo]
+        creado_en: { type: string, format: date-time, readOnly: true }
+
+    # ── JugadorPosicion ────────────────────────────────────
+    JugadorPosicion:
+      type: object
+      properties:
+        id: { type: integer, readOnly: true }
+        jugador: { type: string, format: uuid }
+        nombre_jugador: { type: string, readOnly: true }
+        apellido_jugador: { type: string, readOnly: true }
+        posicion: { type: string, format: uuid }
+        nombre_posicion: { type: string, readOnly: true }
+        abreviatura_posicion: { type: string, readOnly: true }
+        es_principal: { type: boolean, default: false }
+
+    # ── Representante ──────────────────────────────────────
+    Representante:
+      type: object
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        jugador: { type: string, format: uuid }
+        nombre_jugador: { type: string, readOnly: true }
+        apellido_jugador: { type: string, readOnly: true }
+        nombre: { type: string, maxLength: 150 }
+        telefono: { type: string, nullable: true }
+        email: { type: string, format: email, nullable: true }
+        parentesco: { type: string, nullable: true }
+        es_contacto_emergencia: { type: boolean }
+        es_agente: { type: boolean }
+
+    # ── Partido ────────────────────────────────────────────
+    Partido:
+      type: object
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        categoria: { type: string, format: uuid }
+        sede: { type: string, format: uuid, nullable: true }
+        rival: { type: string, maxLength: 150 }
+        es_local: { type: boolean }
+        fecha: { type: string, format: date-time }
+        tipo_partido:
+          type: string
+          enum: [Liga, Copa, Amistoso, Torneo, Playoffs]
+        goles_favor: { type: integer }
+        goles_contra: { type: integer }
+        resultado_final: { type: string, nullable: true }
+        estado_partido:
+          type: string
+          enum: [Programado, En curso, Finalizado, Suspendido, Aplazado]
+        observaciones: { type: string, nullable: true }
+
+    # ── Alineacion ─────────────────────────────────────────
+    Alineacion:
+      type: object
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        partido: { type: string, format: uuid }
+        jugador: { type: string, format: uuid }
+        es_titular: { type: boolean }
+        posicion_partido: { type: string, format: uuid, nullable: true }
+        minuto_entrada: { type: integer }
+        minuto_salida: { type: integer }
+        minutos_jugados: { type: integer, readOnly: true }
+
+    # ── EventoLive ─────────────────────────────────────────
+    EventoLive:
+      type: object
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        partido: { type: string, format: uuid }
+        jugador: { type: string, format: uuid }
+        jugador_secundario: { type: string, format: uuid, nullable: true }
+        minuto: { type: integer }
+        tipo_evento:
+          type: string
+          enum:
+            - Gol
+            - Autogol
+            - Asistencia
+            - Tarjeta amarilla
+            - Tarjeta roja
+            - Doble amarilla
+            - Penalti anotado
+            - Penalti fallado
+            - Cambio entrada
+            - Cambio salida
+            - Lesion
+        descripcion: { type: string, nullable: true }
+        creado_en: { type: string, format: date-time, readOnly: true }
+
+    # ── EvaluacionPostPartido ──────────────────────────────
+    EvaluacionPostPartido:
+      type: object
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        partido: { type: string, format: uuid }
+        jugador: { type: string, format: uuid }
+        calificacion:
+          type: number
+          format: decimal
+          minimum: 1.0
+          maximum: 10.0
+        puntos_positivos: { type: string, nullable: true }
+        puntos_a_mejorar: { type: string, nullable: true }
+        es_visible_jugador: { type: boolean }
+        creado_en: { type: string, format: date-time, readOnly: true }
+
+    # ── ProspectoSeguimiento ───────────────────────────────
+    ProspectoSeguimiento:
+      type: object
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        usuario: { type: string, format: uuid }
+        jugador: { type: string, format: uuid, nullable: true }
+        nombre_jugador: { type: string, nullable: true }
+        equipo_actual: { type: string, nullable: true }
+        posicion: { type: string, format: uuid, nullable: true }
+        fecha_nacimiento: { type: string, format: date, nullable: true }
+        nacionalidad: { type: string, nullable: true }
+        estado:
+          type: string
+          enum: [Seguimiento, Contactado, En evaluación, Oferta enviada, Reclutado, Descartado]
+        fecha_primer_contacto: { type: string, format: date, nullable: true }
+        observaciones: { type: string, nullable: true }
+        creado_en: { type: string, format: date-time, readOnly: true }
+
+    # ── ReporteScouting ────────────────────────────────────
+    ReporteScouting:
+      type: object
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        usuario: { type: string, format: uuid }
+        jugador: { type: string, format: uuid, nullable: true }
+        prospecto: { type: string, format: uuid, nullable: true }
+        valoracion_estrellas:
+          type: integer
+          minimum: 1
+          maximum: 5
+        comentario_tecnico: { type: string, nullable: true }
+        partido_observado: { type: string, nullable: true }
+        fecha_reporte: { type: string, format: date }
+
+    # ── MetricaTecnica ─────────────────────────────────────
+    MetricaTecnica:
+      type: object
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        reporte: { type: string, format: uuid }
+        control: { type: integer, minimum: 1, maximum: 100, nullable: true }
+        pase_corto: { type: integer, minimum: 1, maximum: 100, nullable: true }
+        pase_largo: { type: integer, minimum: 1, maximum: 100, nullable: true }
+        tiro: { type: integer, minimum: 1, maximum: 100, nullable: true }
+        regate: { type: integer, minimum: 1, maximum: 100, nullable: true }
+        cabeceo: { type: integer, minimum: 1, maximum: 100, nullable: true }
+        velocidad: { type: integer, minimum: 1, maximum: 100, nullable: true }
+        resistencia: { type: integer, minimum: 1, maximum: 100, nullable: true }
+        puntaje_tecnico: { type: number, format: decimal, readOnly: true }
+
+    # ── MetricaTactica ─────────────────────────────────────
+    MetricaTactica:
+      type: object
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        reporte: { type: string, format: uuid }
+        ubicacion: { type: integer, minimum: 1, maximum: 100, nullable: true }
+        lectura_juego: { type: integer, minimum: 1, maximum: 100, nullable: true }
+        sacrificio: { type: integer, minimum: 1, maximum: 100, nullable: true }
+        liderazgo: { type: integer, minimum: 1, maximum: 100, nullable: true }
+        presion: { type: integer, minimum: 1, maximum: 100, nullable: true }
+        trabajo_equipo: { type: integer, minimum: 1, maximum: 100, nullable: true }
+        puntaje_tactico: { type: number, format: decimal, readOnly: true }
+
+    # ── ValoracionEconomica ────────────────────────────────
+    ValoracionEconomica:
+      type: object
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        jugador: { type: string, format: uuid }
+        valor_estimado: { type: number, format: decimal }
+        moneda: { type: string, default: USD }
+        fecha_valoracion: { type: string, format: date }
+        metodo_valoracion: { type: string, nullable: true }
+        observaciones: { type: string, nullable: true }
+
+    # ── ContratoInterno ────────────────────────────────────
+    ContratoInterno:
+      type: object
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        jugador: { type: string, format: uuid }
+        tipo_contrato:
+          type: string
+          enum: [Beca, Profesional, Amateur, Prueba]
+        monto: { type: number, format: decimal, nullable: true }
+        moneda: { type: string, default: USD }
+        fecha_inicio: { type: string, format: date }
+        fecha_fin: { type: string, format: date, nullable: true }
+        descripcion: { type: string, nullable: true }
+        archivo_url: { type: string, format: uri, nullable: true }
+        creado_en: { type: string, format: date-time, readOnly: true }
+
+    # ── AntecedentesSalud ──────────────────────────────────
+    AntecedentesSalud:
+      type: object
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        jugador: { type: string, format: uuid }
+        tipo_sangre:
+          type: string
+          enum: [A+, A-, B+, B-, AB+, AB-, O+, O-]
+          nullable: true
+        alergias: { type: string, nullable: true }
+        medicamentos_regulares: { type: string, nullable: true }
+        condiciones_cronicas: { type: string, nullable: true }
+        contacto_medico_nombre: { type: string, nullable: true }
+        contacto_medico_tel: { type: string, nullable: true }
+        actualizado_en: { type: string, format: date-time, readOnly: true }
+
+    # ── HistorialAntropometrico ────────────────────────────
+    HistorialAntropometrico:
+      type: object
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        jugador: { type: string, format: uuid }
+        peso_kg: { type: number, format: decimal }
+        altura_cm: { type: number, format: decimal }
+        grasa_corporal: { type: number, format: decimal, nullable: true }
+        masa_muscular: { type: number, format: decimal, nullable: true }
+        imc: { type: number, format: decimal, readOnly: true }
+        fecha_toma: { type: string, format: date }
+        observaciones: { type: string, nullable: true }
+
+    # ── TestRendimiento ────────────────────────────────────
+    TestRendimiento:
+      type: object
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        jugador: { type: string, format: uuid }
+        velocidad_30m_seg: { type: number, format: decimal, nullable: true }
+        velocidad_60m_seg: { type: number, format: decimal, nullable: true }
+        salto_vertical_cm: { type: integer, nullable: true }
+        salto_horizontal_cm: { type: integer, nullable: true }
+        resistencia_vo2max: { type: number, format: decimal, nullable: true }
+        resistencia_nivel: { type: integer, nullable: true }
+        flexibilidad_cm: { type: integer, nullable: true }
+        agilidad_seg: { type: number, format: decimal, nullable: true }
+        fecha_test: { type: string, format: date }
+        observaciones: { type: string, nullable: true }
+
+    # ── LesionRegistro ─────────────────────────────────────
+    LesionRegistro:
+      type: object
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        jugador: { type: string, format: uuid }
+        descripcion: { type: string }
+        zona_cuerpo: { type: string, maxLength: 80 }
+        tipo_lesion: { type: string, nullable: true }
+        gravedad:
+          type: string
+          enum: [Leve, Moderada, Grave]
+          nullable: true
+        fecha_inicio: { type: string, format: date }
+        fecha_alta: { type: string, format: date, nullable: true }
+        activa: { type: boolean }
+        medico_tratante: { type: string, nullable: true }
+        observaciones: { type: string, nullable: true }
+        sesiones:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/SesionRehabilitacion'
+
+    # ── SesionRehabilitacion ───────────────────────────────
+    SesionRehabilitacion:
+      type: object
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        lesion: { type: string, format: uuid }
+        ejercicios_realizados: { type: string }
+        duracion_minutos: { type: integer, nullable: true }
+        dolor_nivel:
+          type: integer
+          minimum: 0
+          maximum: 10
+          nullable: true
+        fecha_sesion: { type: string, format: date }
+        fisioterapeuta: { type: string, nullable: true }
+        observaciones: { type: string, nullable: true }
+
+    # ── PlanAlimenticio ────────────────────────────────────
+    PlanAlimenticio:
+      type: object
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        jugador: { type: string, format: uuid }
+        descripcion_dieta: { type: string, nullable: true }
+        calorias_totales: { type: integer, nullable: true }
+        proteina_gr: { type: integer, nullable: true }
+        carbohidratos_gr: { type: integer, nullable: true }
+        grasas_gr: { type: integer, nullable: true }
+        hidratacion_ml: { type: integer, nullable: true }
+        fecha_inicio: { type: string, format: date }
+        fecha_fin: { type: string, format: date, nullable: true }
+        nutricionista: { type: string, nullable: true }
+        activo: { type: boolean }
+
+    # ── Paginación ─────────────────────────────────────────
+    PaginatedResponse:
+      type: object
+      properties:
+        count: { type: integer }
+        next: { type: string, format: uri, nullable: true }
+        previous: { type: string, format: uri, nullable: true }
+        results:
+          type: array
+          items: {}
+
+security:
+  - BearerAuth: []
+
+paths:
+  # ─────────────────────────────────────────────────────────
+  # HEALTH
+  # ─────────────────────────────────────────────────────────
+  /health/:
+    get:
+      tags: [Health]
+      summary: Estado del servicio
+      security: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+                  version: { type: string, example: "1.0" }
+
+  # ─────────────────────────────────────────────────────────
+  # AUTH
+  # ─────────────────────────────────────────────────────────
+  /auth/register/:
+    post:
+      tags: [Auth]
+      summary: Registro de nuevo usuario
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RegisterRequest' }
+      responses:
+        "201":
+          description: Usuario creado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AuthResponse' }
+        "400":
+          description: Datos inválidos
+
+  /auth/login/:
+    post:
+      tags: [Auth]
+      summary: Login — obtener tokens JWT
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LoginRequest' }
+      responses:
+        "200":
+          description: Tokens + datos de usuario
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AuthResponse' }
+        "401":
+          description: Credenciales inválidas
+
+  /auth/token/refresh/:
+    post:
+      tags: [Auth]
+      summary: Renovar access token
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/TokenRefreshRequest' }
+      responses:
+        "200":
+          description: Nuevo access token
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TokenRefreshResponse' }
+
+  /auth/token/verify/:
+    post:
+      tags: [Auth]
+      summary: Verificar validez de un token
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token: { type: string }
+      responses:
+        "200":
+          description: Token válido
+        "401":
+          description: Token inválido
+
+  /auth/logout/:
+    post:
+      tags: [Auth]
+      summary: Logout — invalida el refresh token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LogoutRequest' }
+      responses:
+        "200":
+          description: Sesión cerrada
+        "400":
+          description: Token requerido o inválido
+
+  # ─────────────────────────────────────────────────────────
+  # USERS  (solo admin)
+  # ─────────────────────────────────────────────────────────
+  /users/:
+    get:
+      tags: [Users]
+      summary: Listar usuarios (admin)
+      parameters:
+        - { name: tipo_usuario, in: query, schema: { type: string } }
+        - { name: estado, in: query, schema: { type: string } }
+        - { name: is_staff, in: query, schema: { type: boolean } }
+        - { name: is_active, in: query, schema: { type: boolean } }
+        - { name: search, in: query, schema: { type: string } }
+        - { name: ordering, in: query, schema: { type: string } }
+        - { name: page, in: query, schema: { type: integer } }
+      responses:
+        "200":
+          description: Lista paginada de usuarios
+    post:
+      tags: [Users]
+      summary: Crear usuario (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Usuario' }
+      responses:
+        "201": { description: Usuario creado }
+
+  /users/{id}/:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      tags: [Users]
+      summary: Obtener usuario
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Usuario' }
+          description: OK
+    patch:
+      tags: [Users]
+      summary: Actualizar usuario parcialmente
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Usuario' }
+      responses:
+        "200": { description: Actualizado }
+    delete:
+      tags: [Users]
+      summary: Eliminar usuario
+      responses:
+        "204": { description: Eliminado }
+
+  /users/profile/:
+    get:
+      tags: [Users]
+      summary: Ver perfil propio
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Usuario' }
+          description: OK
+    patch:
+      tags: [Users]
+      summary: Actualizar perfil propio
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Usuario' }
+      responses:
+        "200": { description: Actualizado }
+
+  /users/change-password/:
+    post:
+      tags: [Users]
+      summary: Cambiar contraseña
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ChangePasswordRequest' }
+      responses:
+        "200": { description: Contraseña actualizada }
+
+  /users/{id}/toggle-active/:
+    post:
+      tags: [Users]
+      summary: Activar / desactivar usuario (admin)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        "200": { description: Estado actualizado }
+
+  /users/stats/:
+    get:
+      tags: [Users]
+      summary: Estadísticas de usuarios (admin)
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UserStats' }
+          description: OK
+
+  # ─────────────────────────────────────────────────────────
+  # SUSCRIPCIONES  (staff o lectura)
+  # ─────────────────────────────────────────────────────────
+  /suscripciones/:
+    get:
+      tags: [Suscripciones]
+      summary: Listar suscripciones
+      parameters:
+        - { name: plan, in: query, schema: { type: string } }
+        - { name: estado, in: query, schema: { type: string } }
+        - { name: search, in: query, schema: { type: string } }
+        - { name: ordering, in: query, schema: { type: string } }
+        - { name: page, in: query, schema: { type: integer } }
+      responses:
+        "200": { description: OK }
+    post:
+      tags: [Suscripciones]
+      summary: Crear suscripción
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Suscripcion' }
+      responses:
+        "201": { description: Creada }
+
+  /suscripciones/{id}/:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      tags: [Suscripciones]
+      summary: Obtener suscripción
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Suscripcion' }
+          description: OK
+    patch:
+      tags: [Suscripciones]
+      summary: Actualizar suscripción
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Suscripcion' }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Suscripciones]
+      summary: Eliminar suscripción
+      responses:
+        "204": { description: Eliminada }
+
+  /suscripciones/stats/:
+    get:
+      tags: [Suscripciones]
+      summary: Estadísticas de suscripciones
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SuscripcionStats' }
+          description: OK
+
+  # ─────────────────────────────────────────────────────────
+  # ENTIDADES  (IsCoach)
+  # ─────────────────────────────────────────────────────────
+  /entidades/:
+    get:
+      tags: [Entidades]
+      summary: Listar entidades
+      parameters:
+        - { name: estado, in: query, schema: { type: string } }
+        - { name: pais, in: query, schema: { type: string } }
+        - { name: search, in: query, schema: { type: string } }
+        - { name: ordering, in: query, schema: { type: string } }
+        - { name: page, in: query, schema: { type: integer } }
+      responses:
+        "200": { description: OK }
+    post:
+      tags: [Entidades]
+      summary: Crear entidad
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Entidad' }
+      responses:
+        "201": { description: Creada }
+
+  /entidades/{id}/:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      tags: [Entidades]
+      summary: Obtener entidad
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Entidad' }
+          description: OK
+    put:
+      tags: [Entidades]
+      summary: Reemplazar entidad
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Entidad' }
+      responses:
+        "200": { description: OK }
+    patch:
+      tags: [Entidades]
+      summary: Actualizar entidad parcialmente
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Entidad' }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Entidades]
+      summary: Eliminar entidad
+      responses:
+        "204": { description: Eliminada }
+
+  /entidades/stats/:
+    get:
+      tags: [Entidades]
+      summary: Estadísticas de entidades
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EntidadStats' }
+          description: OK
+
+  # ─────────────────────────────────────────────────────────
+  # SEDES
+  # ─────────────────────────────────────────────────────────
+  /sedes/:
+    get:
+      tags: [Sedes]
+      summary: Listar sedes
+      parameters:
+        - { name: entidad, in: query, schema: { type: string } }
+        - { name: tipo_superficie, in: query, schema: { type: string } }
+        - { name: search, in: query, schema: { type: string } }
+        - { name: ordering, in: query, schema: { type: string } }
+        - { name: page, in: query, schema: { type: integer } }
+      responses:
+        "200": { description: OK }
+    post:
+      tags: [Sedes]
+      summary: Crear sede
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Sede' }
+      responses:
+        "201": { description: Creada }
+
+  /sedes/{id}/:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      tags: [Sedes]
+      summary: Obtener sede
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Sede' }
+          description: OK
+    put:
+      tags: [Sedes]
+      summary: Reemplazar sede
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Sede' }
+      responses:
+        "200": { description: OK }
+    patch:
+      tags: [Sedes]
+      summary: Actualizar sede parcialmente
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Sede' }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Sedes]
+      summary: Eliminar sede
+      responses:
+        "204": { description: Eliminada }
+
+  # ─────────────────────────────────────────────────────────
+  # CATEGORÍAS
+  # ─────────────────────────────────────────────────────────
+  /categorias/:
+    get:
+      tags: [Categorías]
+      summary: Listar categorías
+      parameters:
+        - { name: entidad, in: query, schema: { type: string } }
+        - { name: genero, in: query, schema: { type: string } }
+        - { name: activo, in: query, schema: { type: boolean } }
+        - { name: search, in: query, schema: { type: string } }
+        - { name: ordering, in: query, schema: { type: string } }
+        - { name: page, in: query, schema: { type: integer } }
+      responses:
+        "200": { description: OK }
+    post:
+      tags: [Categorías]
+      summary: Crear categoría
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Categoria' }
+      responses:
+        "201": { description: Creada }
+
+  /categorias/{id}/:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      tags: [Categorías]
+      summary: Obtener categoría
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Categoria' }
+          description: OK
+    put:
+      tags: [Categorías]
+      summary: Reemplazar categoría
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Categoria' }
+      responses:
+        "200": { description: OK }
+    patch:
+      tags: [Categorías]
+      summary: Actualizar categoría parcialmente
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Categoria' }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Categorías]
+      summary: Eliminar categoría
+      responses:
+        "204": { description: Eliminada }
+
+  # ─────────────────────────────────────────────────────────
+  # POSICIONES  (staff o lectura)
+  # ─────────────────────────────────────────────────────────
+  /posiciones/:
+    get:
+      tags: [Posiciones]
+      summary: Listar posiciones
+      parameters:
+        - { name: zona, in: query, schema: { type: string } }
+        - { name: search, in: query, schema: { type: string } }
+        - { name: ordering, in: query, schema: { type: string } }
+        - { name: page, in: query, schema: { type: integer } }
+      responses:
+        "200": { description: OK }
+    post:
+      tags: [Posiciones]
+      summary: Crear posición (staff)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Posicion' }
+      responses:
+        "201": { description: Creada }
+
+  /posiciones/{id}/:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      tags: [Posiciones]
+      summary: Obtener posición
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Posicion' }
+          description: OK
+    put:
+      tags: [Posiciones]
+      summary: Reemplazar posición (staff)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Posicion' }
+      responses:
+        "200": { description: OK }
+    patch:
+      tags: [Posiciones]
+      summary: Actualizar posición parcialmente (staff)
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Posicion' }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Posiciones]
+      summary: Eliminar posición (staff)
+      responses:
+        "204": { description: Eliminada }
+
+  # ─────────────────────────────────────────────────────────
+  # JUGADORES
+  # ─────────────────────────────────────────────────────────
+  /jugadores/:
+    get:
+      tags: [Jugadores]
+      summary: Listar jugadores
+      parameters:
+        - { name: entidad, in: query, schema: { type: string } }
+        - { name: categoria, in: query, schema: { type: string } }
+        - { name: estado, in: query, schema: { type: string } }
+        - { name: pie_dominante, in: query, schema: { type: string } }
+        - { name: search, in: query, schema: { type: string }, description: "Busca en nombres, apellidos, documento, nacionalidad" }
+        - { name: ordering, in: query, schema: { type: string } }
+        - { name: page, in: query, schema: { type: integer } }
+      responses:
+        "200": { description: OK }
+    post:
+      tags: [Jugadores]
+      summary: Crear jugador
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Jugador' }
+      responses:
+        "201": { description: Creado }
+
+  /jugadores/{id}/:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      tags: [Jugadores]
+      summary: Obtener jugador
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Jugador' }
+          description: OK
+    put:
+      tags: [Jugadores]
+      summary: Reemplazar jugador
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Jugador' }
+      responses:
+        "200": { description: OK }
+    patch:
+      tags: [Jugadores]
+      summary: Actualizar jugador parcialmente
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Jugador' }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Jugadores]
+      summary: Eliminar jugador
+      responses:
+        "204": { description: Eliminado }
+
+  # ─────────────────────────────────────────────────────────
+  # JUGADOR-POSICIONES
+  # ─────────────────────────────────────────────────────────
+  /jugador-posiciones/:
+    get:
+      tags: [Jugador-Posiciones]
+      summary: Listar asignaciones de posición
+      parameters:
+        - { name: jugador, in: query, schema: { type: string } }
+        - { name: posicion, in: query, schema: { type: string } }
+        - { name: es_principal, in: query, schema: { type: boolean } }
+      responses:
+        "200": { description: OK }
+    post:
+      tags: [Jugador-Posiciones]
+      summary: Asignar posición a jugador
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/JugadorPosicion' }
+      responses:
+        "201": { description: Creado }
+
+  /jugador-posiciones/{id}/:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: integer } }
+    get:
+      tags: [Jugador-Posiciones]
+      summary: Obtener asignación
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/JugadorPosicion' }
+          description: OK
+    patch:
+      tags: [Jugador-Posiciones]
+      summary: Actualizar asignación
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/JugadorPosicion' }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Jugador-Posiciones]
+      summary: Eliminar asignación
+      responses:
+        "204": { description: Eliminada }
+
+  # ─────────────────────────────────────────────────────────
+  # REPRESENTANTES
+  # ─────────────────────────────────────────────────────────
+  /representantes/:
+    get:
+      tags: [Representantes]
+      summary: Listar representantes
+      parameters:
+        - { name: jugador, in: query, schema: { type: string } }
+        - { name: es_agente, in: query, schema: { type: boolean } }
+        - { name: search, in: query, schema: { type: string } }
+        - { name: ordering, in: query, schema: { type: string } }
+        - { name: page, in: query, schema: { type: integer } }
+      responses:
+        "200": { description: OK }
+    post:
+      tags: [Representantes]
+      summary: Crear representante
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Representante' }
+      responses:
+        "201": { description: Creado }
+
+  /representantes/{id}/:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      tags: [Representantes]
+      summary: Obtener representante
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Representante' }
+          description: OK
+    patch:
+      tags: [Representantes]
+      summary: Actualizar representante
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Representante' }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Representantes]
+      summary: Eliminar representante
+      responses:
+        "204": { description: Eliminado }
+
+  # ─────────────────────────────────────────────────────────
+  # PARTIDOS
+  # ─────────────────────────────────────────────────────────
+  /partidos/:
+    get:
+      tags: [Partidos]
+      summary: Listar partidos
+      parameters:
+        - { name: categoria, in: query, schema: { type: string } }
+        - { name: estado_partido, in: query, schema: { type: string } }
+        - { name: tipo_partido, in: query, schema: { type: string } }
+        - { name: page, in: query, schema: { type: integer } }
+      responses:
+        "200": { description: OK }
+    post:
+      tags: [Partidos]
+      summary: Crear partido
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Partido' }
+      responses:
+        "201": { description: Creado }
+
+  /partidos/{id}/:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      tags: [Partidos]
+      summary: Obtener partido
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Partido' }
+          description: OK
+    patch:
+      tags: [Partidos]
+      summary: Actualizar partido
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Partido' }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Partidos]
+      summary: Eliminar partido
+      responses:
+        "204": { description: Eliminado }
+
+  # ─────────────────────────────────────────────────────────
+  # ALINEACIONES
+  # ─────────────────────────────────────────────────────────
+  /alineaciones/:
+    get:
+      tags: [Alineaciones]
+      summary: Listar alineaciones
+      parameters:
+        - { name: partido, in: query, schema: { type: string } }
+        - { name: jugador, in: query, schema: { type: string } }
+      responses:
+        "200": { description: OK }
+    post:
+      tags: [Alineaciones]
+      summary: Registrar jugador en alineación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Alineacion' }
+      responses:
+        "201": { description: Creada }
+
+  /alineaciones/{id}/:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      tags: [Alineaciones]
+      summary: Obtener alineación
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Alineacion' }
+          description: OK
+    patch:
+      tags: [Alineaciones]
+      summary: Actualizar alineación
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Alineacion' }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Alineaciones]
+      summary: Eliminar alineación
+      responses:
+        "204": { description: Eliminada }
+
+  # ─────────────────────────────────────────────────────────
+  # EVENTOS LIVE
+  # ─────────────────────────────────────────────────────────
+  /eventos-live/:
+    get:
+      tags: [Eventos Live]
+      summary: Listar eventos de partido
+      parameters:
+        - { name: partido, in: query, schema: { type: string } }
+        - { name: jugador, in: query, schema: { type: string } }
+        - { name: tipo_evento, in: query, schema: { type: string } }
+      responses:
+        "200": { description: OK }
+    post:
+      tags: [Eventos Live]
+      summary: Registrar evento en partido
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/EventoLive' }
+      responses:
+        "201": { description: Creado }
+
+  /eventos-live/{id}/:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      tags: [Eventos Live]
+      summary: Obtener evento
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EventoLive' }
+          description: OK
+    patch:
+      tags: [Eventos Live]
+      summary: Actualizar evento
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/EventoLive' }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Eventos Live]
+      summary: Eliminar evento
+      responses:
+        "204": { description: Eliminado }
+
+  # ─────────────────────────────────────────────────────────
+  # EVALUACIÓN POST-PARTIDO
+  # ─────────────────────────────────────────────────────────
+  /evaluacion-post-partido/:
+    get:
+      tags: [Evaluación Post-Partido]
+      summary: Listar evaluaciones
+      parameters:
+        - { name: partido, in: query, schema: { type: string } }
+        - { name: jugador, in: query, schema: { type: string } }
+      responses:
+        "200": { description: OK }
+    post:
+      tags: [Evaluación Post-Partido]
+      summary: Crear evaluación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/EvaluacionPostPartido' }
+      responses:
+        "201": { description: Creada }
+
+  /evaluacion-post-partido/{id}/:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      tags: [Evaluación Post-Partido]
+      summary: Obtener evaluación
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EvaluacionPostPartido' }
+          description: OK
+    patch:
+      tags: [Evaluación Post-Partido]
+      summary: Actualizar evaluación
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/EvaluacionPostPartido' }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Evaluación Post-Partido]
+      summary: Eliminar evaluación
+      responses:
+        "204": { description: Eliminada }
+
+  # ─────────────────────────────────────────────────────────
+  # PROSPECTOS SEGUIMIENTO
+  # ─────────────────────────────────────────────────────────
+  /prospectos-seguimiento/:
+    get:
+      tags: [Scouting]
+      summary: Listar prospectos
+      parameters:
+        - { name: estado, in: query, schema: { type: string } }
+        - { name: nacionalidad, in: query, schema: { type: string } }
+        - { name: search, in: query, schema: { type: string } }
+        - { name: ordering, in: query, schema: { type: string } }
+        - { name: page, in: query, schema: { type: integer } }
+      responses:
+        "200": { description: OK }
+    post:
+      tags: [Scouting]
+      summary: Crear prospecto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ProspectoSeguimiento' }
+      responses:
+        "201": { description: Creado }
+
+  /prospectos-seguimiento/{id}/:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      tags: [Scouting]
+      summary: Obtener prospecto
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProspectoSeguimiento' }
+          description: OK
+    patch:
+      tags: [Scouting]
+      summary: Actualizar prospecto
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ProspectoSeguimiento' }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Scouting]
+      summary: Eliminar prospecto
+      responses:
+        "204": { description: Eliminado }
+
+  # ─────────────────────────────────────────────────────────
+  # REPORTES SCOUTING
+  # ─────────────────────────────────────────────────────────
+  /reportes-scouting/:
+    get:
+      tags: [Scouting]
+      summary: Listar reportes de scouting
+      parameters:
+        - { name: usuario, in: query, schema: { type: string } }
+        - { name: jugador, in: query, schema: { type: string } }
+        - { name: prospecto, in: query, schema: { type: string } }
+      responses:
+        "200": { description: OK }
+    post:
+      tags: [Scouting]
+      summary: Crear reporte de scouting
+      description: Se debe indicar al menos `jugador` o `prospecto`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ReporteScouting' }
+      responses:
+        "201": { description: Creado }
+
+  /reportes-scouting/{id}/:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      tags: [Scouting]
+      summary: Obtener reporte
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ReporteScouting' }
+          description: OK
+    patch:
+      tags: [Scouting]
+      summary: Actualizar reporte
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ReporteScouting' }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Scouting]
+      summary: Eliminar reporte
+      responses:
+        "204": { description: Eliminado }
+
+  # ─────────────────────────────────────────────────────────
+  # MÉTRICAS TÉCNICAS
+  # ─────────────────────────────────────────────────────────
+  /metricas-tecnicas/:
+    get:
+      tags: [Métricas Técnicas]
+      summary: Listar métricas técnicas
+      responses:
+        "200": { description: OK }
+    post:
+      tags: [Métricas Técnicas]
+      summary: Crear métricas técnicas
+      description: Vinculadas 1-a-1 con un ReporteScouting.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MetricaTecnica' }
+      responses:
+        "201": { description: Creadas }
+
+  /metricas-tecnicas/{id}/:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      tags: [Métricas Técnicas]
+      summary: Obtener métricas técnicas
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MetricaTecnica' }
+          description: OK
+    patch:
+      tags: [Métricas Técnicas]
+      summary: Actualizar métricas técnicas
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MetricaTecnica' }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Métricas Técnicas]
+      summary: Eliminar métricas técnicas
+      responses:
+        "204": { description: Eliminadas }
+
+  # ─────────────────────────────────────────────────────────
+  # MÉTRICAS TÁCTICAS
+  # ─────────────────────────────────────────────────────────
+  /metricas-tacticas/:
+    get:
+      tags: [Métricas Tácticas]
+      summary: Listar métricas tácticas
+      responses:
+        "200": { description: OK }
+    post:
+      tags: [Métricas Tácticas]
+      summary: Crear métricas tácticas
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MetricaTactica' }
+      responses:
+        "201": { description: Creadas }
+
+  /metricas-tacticas/{id}/:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      tags: [Métricas Tácticas]
+      summary: Obtener métricas tácticas
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MetricaTactica' }
+          description: OK
+    patch:
+      tags: [Métricas Tácticas]
+      summary: Actualizar métricas tácticas
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MetricaTactica' }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Métricas Tácticas]
+      summary: Eliminar métricas tácticas
+      responses:
+        "204": { description: Eliminadas }
+
+  # ─────────────────────────────────────────────────────────
+  # VALORACIÓN ECONÓMICA
+  # ─────────────────────────────────────────────────────────
+  /valoracion-economica/:
+    get:
+      tags: [Valoración Económica]
+      summary: Listar valoraciones económicas
+      parameters:
+        - { name: jugador, in: query, schema: { type: string } }
+      responses:
+        "200": { description: OK }
+    post:
+      tags: [Valoración Económica]
+      summary: Registrar valoración económica
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ValoracionEconomica' }
+      responses:
+        "201": { description: Creada }
+
+  /valoracion-economica/{id}/:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      tags: [Valoración Económica]
+      summary: Obtener valoración
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ValoracionEconomica' }
+          description: OK
+    patch:
+      tags: [Valoración Económica]
+      summary: Actualizar valoración
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ValoracionEconomica' }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Valoración Económica]
+      summary: Eliminar valoración
+      responses:
+        "204": { description: Eliminada }
+
+  # ─────────────────────────────────────────────────────────
+  # CONTRATOS
+  # ─────────────────────────────────────────────────────────
+  /contratos/:
+    get:
+      tags: [Contratos]
+      summary: Listar contratos
+      parameters:
+        - { name: tipo_contrato, in: query, schema: { type: string } }
+        - { name: moneda, in: query, schema: { type: string } }
+        - { name: search, in: query, schema: { type: string } }
+        - { name: ordering, in: query, schema: { type: string } }
+        - { name: page, in: query, schema: { type: integer } }
+      responses:
+        "200": { description: OK }
+    post:
+      tags: [Contratos]
+      summary: Crear contrato
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ContratoInterno' }
+      responses:
+        "201": { description: Creado }
+
+  /contratos/{id}/:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      tags: [Contratos]
+      summary: Obtener contrato
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ContratoInterno' }
+          description: OK
+    patch:
+      tags: [Contratos]
+      summary: Actualizar contrato
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ContratoInterno' }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Contratos]
+      summary: Eliminar contrato
+      responses:
+        "204": { description: Eliminado }
+
+  # ─────────────────────────────────────────────────────────
+  # SALUD
+  # ─────────────────────────────────────────────────────────
+  /salud/:
+    get:
+      tags: [Salud]
+      summary: Listar antecedentes de salud
+      parameters:
+        - { name: tipo_sangre, in: query, schema: { type: string } }
+        - { name: jugador, in: query, schema: { type: string } }
+        - { name: page, in: query, schema: { type: integer } }
+      responses:
+        "200": { description: OK }
+    post:
+      tags: [Salud]
+      summary: Registrar antecedentes de salud
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AntecedentesSalud' }
+      responses:
+        "201": { description: Creado }
+
+  /salud/{id}/:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      tags: [Salud]
+      summary: Obtener antecedentes
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AntecedentesSalud' }
+          description: OK
+    patch:
+      tags: [Salud]
+      summary: Actualizar antecedentes
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AntecedentesSalud' }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Salud]
+      summary: Eliminar antecedentes
+      responses:
+        "204": { description: Eliminado }
+
+  # ─────────────────────────────────────────────────────────
+  # ANTROPOMETRÍA
+  # ─────────────────────────────────────────────────────────
+  /antropometria/:
+    get:
+      tags: [Antropometría]
+      summary: Listar historial antropométrico
+      parameters:
+        - { name: jugador, in: query, schema: { type: string } }
+        - { name: ordering, in: query, schema: { type: string } }
+        - { name: page, in: query, schema: { type: integer } }
+      responses:
+        "200": { description: OK }
+    post:
+      tags: [Antropometría]
+      summary: Registrar medición
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/HistorialAntropometrico' }
+      responses:
+        "201": { description: Creada }
+
+  /antropometria/{id}/:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      tags: [Antropometría]
+      summary: Obtener medición
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/HistorialAntropometrico' }
+          description: OK
+    patch:
+      tags: [Antropometría]
+      summary: Actualizar medición
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/HistorialAntropometrico' }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Antropometría]
+      summary: Eliminar medición
+      responses:
+        "204": { description: Eliminada }
+
+  # ─────────────────────────────────────────────────────────
+  # RENDIMIENTO
+  # ─────────────────────────────────────────────────────────
+  /rendimiento/:
+    get:
+      tags: [Rendimiento]
+      summary: Listar tests de rendimiento
+      parameters:
+        - { name: jugador, in: query, schema: { type: string } }
+        - { name: ordering, in: query, schema: { type: string } }
+        - { name: page, in: query, schema: { type: integer } }
+      responses:
+        "200": { description: OK }
+    post:
+      tags: [Rendimiento]
+      summary: Registrar test
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/TestRendimiento' }
+      responses:
+        "201": { description: Creado }
+
+  /rendimiento/{id}/:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      tags: [Rendimiento]
+      summary: Obtener test
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TestRendimiento' }
+          description: OK
+    patch:
+      tags: [Rendimiento]
+      summary: Actualizar test
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/TestRendimiento' }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Rendimiento]
+      summary: Eliminar test
+      responses:
+        "204": { description: Eliminado }
+
+  # ─────────────────────────────────────────────────────────
+  # LESIONES
+  # ─────────────────────────────────────────────────────────
+  /lesiones/:
+    get:
+      tags: [Lesiones]
+      summary: Listar lesiones
+      parameters:
+        - { name: jugador, in: query, schema: { type: string } }
+        - { name: gravedad, in: query, schema: { type: string } }
+        - { name: activa, in: query, schema: { type: boolean } }
+        - { name: search, in: query, schema: { type: string } }
+        - { name: ordering, in: query, schema: { type: string } }
+        - { name: page, in: query, schema: { type: integer } }
+      responses:
+        "200": { description: OK }
+    post:
+      tags: [Lesiones]
+      summary: Registrar lesión
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LesionRegistro' }
+      responses:
+        "201": { description: Creada }
+
+  /lesiones/{id}/:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      tags: [Lesiones]
+      summary: Obtener lesión (incluye sesiones de rehab)
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LesionRegistro' }
+          description: OK
+    patch:
+      tags: [Lesiones]
+      summary: Actualizar lesión
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LesionRegistro' }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Lesiones]
+      summary: Eliminar lesión
+      responses:
+        "204": { description: Eliminada }
+
+  # ─────────────────────────────────────────────────────────
+  # REHABILITACIÓN
+  # ─────────────────────────────────────────────────────────
+  /rehabilitacion/:
+    get:
+      tags: [Rehabilitación]
+      summary: Listar sesiones de rehabilitación
+      parameters:
+        - { name: lesion, in: query, schema: { type: string } }
+        - { name: ordering, in: query, schema: { type: string } }
+        - { name: page, in: query, schema: { type: integer } }
+      responses:
+        "200": { description: OK }
+    post:
+      tags: [Rehabilitación]
+      summary: Registrar sesión de rehabilitación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SesionRehabilitacion' }
+      responses:
+        "201": { description: Creada }
+
+  /rehabilitacion/{id}/:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      tags: [Rehabilitación]
+      summary: Obtener sesión
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SesionRehabilitacion' }
+          description: OK
+    patch:
+      tags: [Rehabilitación]
+      summary: Actualizar sesión
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SesionRehabilitacion' }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Rehabilitación]
+      summary: Eliminar sesión
+      responses:
+        "204": { description: Eliminada }
+
+  # ─────────────────────────────────────────────────────────
+  # DIETAS
+  # ─────────────────────────────────────────────────────────
+  /dietas/:
+    get:
+      tags: [Dietas]
+      summary: Listar planes alimenticios
+      parameters:
+        - { name: jugador, in: query, schema: { type: string } }
+        - { name: activo, in: query, schema: { type: boolean } }
+        - { name: ordering, in: query, schema: { type: string } }
+        - { name: page, in: query, schema: { type: integer } }
+      responses:
+        "200": { description: OK }
+    post:
+      tags: [Dietas]
+      summary: Crear plan alimenticio
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PlanAlimenticio' }
+      responses:
+        "201": { description: Creado }
+
+  /dietas/{id}/:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      tags: [Dietas]
+      summary: Obtener plan alimenticio
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PlanAlimenticio' }
+          description: OK
+    patch:
+      tags: [Dietas]
+      summary: Actualizar plan alimenticio
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PlanAlimenticio' }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Dietas]
+      summary: Eliminar plan alimenticio
+      responses:
+        "204": { description: Eliminado }
