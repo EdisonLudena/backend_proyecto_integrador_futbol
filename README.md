@@ -57,18 +57,23 @@ cp .env.example .env
 nano .env
 ```
 
-Contenido mínimo del `.env`:
+Contenido mínimo del `.env` example:
 
 ```env
-SECRET_KEY=tu-clave-secreta-aqui
+# Django
+SECRET_KEY=
 DEBUG=True
 ALLOWED_HOSTS=localhost,127.0.0.1
 
-DB_NAME=futbol_db
-DB_USER=futbol_user
-DB_PASSWORD=tu_password
-DB_HOST=localhost
-DB_PORT=5432
+# PostgreSQL
+DB_NAME=
+DB_USER=
+DB_PASSWORD=
+DB_HOST=
+DB_PORT=
+
+# CORS
+CORS_ALLOW_ALL_ORIGINS=
 ```
 
 ### 5. Ejecutar migraciones
