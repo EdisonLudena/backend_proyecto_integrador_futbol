@@ -112,11 +112,8 @@ dependencies = [
     { name = "django-filter" },
     { name = "djangorestframework" },
     { name = "djangorestframework-simplejwt" },
-<<<<<<< HEAD
     { name = "gunicorn" },
-=======
     { name = "drf-spectacular" },
->>>>>>> 1bf06fa (Add: swagger para probar endpoints)
     { name = "psycopg2-binary" },
     { name = "python-decouple" },
 ]
