@@ -85,7 +85,7 @@ jobs:
             echo "── 6. Verificando salud ──"
             sleep 3
             for i in 1 2 3; do
-              STATUS=$(curl -sf -o /dev/null -w "%{http_code}" http://127.0.0.1:8080/api/health/)
+              STATUS=$(curl -sf -o /dev/null -w "%{http_code}" http://127.0.0.1/api/health/)
               if [ "$STATUS" = "200" ]; then
                 echo "API OK (HTTP $STATUS)"
                 exit 0
