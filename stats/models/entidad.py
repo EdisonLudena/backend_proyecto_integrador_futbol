@@ -16,6 +16,8 @@ class Entidad(models.Model):
     )
     nombre_entidad = models.CharField(max_length=150)
     logo_url = models.CharField(max_length=500, blank=True, null=True)
+    director_tecnico = models.CharField(max_length=150, blank=True, null=True)
+    anio_fundacion = models.IntegerField(blank=True, null=True)
     ciudad = models.CharField(max_length=100, blank=True, null=True)
     pais = models.CharField(max_length=100, default='Ecuador')
     telefono_contacto = models.CharField(max_length=20, blank=True, null=True)

@@ -9,12 +9,14 @@ from stats.models.entidad import Entidad
 from stats.serializers.entidad import EntidadSerializer
 from stats.filters import EntidadFilter
 from stats.pagination import StandardPagination
-from rest_framework.permissions import IsAuthenticated
+from stats.permissions import IsCoachOrReadOnly
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 
 class EntidadViewSet(viewsets.ModelViewSet):
     queryset = Entidad.objects.all()
     serializer_class = EntidadSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsCoachOrReadOnly]
     pagination_class = StandardPagination
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = EntidadFilter
@@ -33,3 +35,15 @@ class EntidadViewSet(viewsets.ModelViewSet):
             'inactivas': qs.filter(estado='Inactivo').count(),
             'top_ciudades': list(top_ciudades_qs)
         })
+
+    @action(detail=True, methods=['patch'], url_path='escudo')
+    def upload_escudo(self, request, pk=None):
+        entidad = self.get_object()
+        file = request.FILES.get('escudo')
+        if not file:
+            return Response({'error': 'No se proporcionó ningún archivo'}, status=400)
+            
+        path = default_storage.save(f'escudos/{file.name}', ContentFile(file.read()))
+        entidad.logo_url = request.build_absolute_uri(default_storage.url(path))
+        entidad.save()
+        return Response({'badgeUrl': entidad.logo_url})

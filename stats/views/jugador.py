@@ -15,7 +15,6 @@ class JugadorViewSet(viewsets.ModelViewSet):
     queryset = Jugador.objects.all()
     serializer_class = JugadorSerializer
     permission_classes = [AllowAny]
-    permission_classes = [IsAuthenticated]
     pagination_class = StandardPagination
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = JugadorFilter

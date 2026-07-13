@@ -8,6 +8,7 @@ class EntidadSerializer(serializers.ModelSerializer):
         model = Entidad
         fields = [
             'id', 'usuario', 'email_creador', 'nombre_entidad',
+            'director_tecnico', 'anio_fundacion',
             'logo_url', 'ciudad', 'pais', 'telefono_contacto',
             'estado', 'creado_en'
         ]
