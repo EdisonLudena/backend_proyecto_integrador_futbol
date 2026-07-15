@@ -159,8 +159,8 @@ class FootballModelsTest(TestCase):
         partido = Partido.objects.create(
             categoria=self.categoria,
             sede=self.sede,
-            rival='Club Atlético Rival',
-            es_local=True,
+            equipo_visitante='Club Atlético Rival',
+            equipo_local='Mi Equipo',
             fecha=timezone.now(),
             tipo_partido='Liga',
             goles_favor=2,
@@ -168,7 +168,7 @@ class FootballModelsTest(TestCase):
             resultado_final='2-1',
             estado_partido='Finalizado'
         )
-        self.assertEqual(partido.rival, 'Club Atlético Rival')
+        self.assertEqual(partido.equipo_visitante, 'Club Atlético Rival')
 
         alineacion = Alineacion.objects.create(
             partido=partido,
@@ -193,7 +193,8 @@ class FootballModelsTest(TestCase):
     def test_evaluacion_post_partido(self):
         partido = Partido.objects.create(
             categoria=self.categoria,
-            rival='Club Atlético Rival',
+            equipo_visitante='Club Atlético Rival',
+            equipo_local='Mi Equipo',
             fecha=timezone.now()
         )
 
