@@ -78,12 +78,11 @@ jobs:
         env:
           VPS_HOST:    ${{ secrets.VPS_HOST }}
           VPS_USER:    ${{ secrets.VPS_USERNAME }}
-          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
         run: |
           ssh $VPS_USER@$VPS_HOST << 'ENDSSH'
             set -e
             echo "── 1. Actualizando código ──"
-            cd $DEPLOY_PATH
+            cd /opt/futbol_pulse_backend
             git fetch origin
             git reset --hard origin/main
 
