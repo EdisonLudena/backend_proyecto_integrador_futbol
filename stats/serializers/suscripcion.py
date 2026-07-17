@@ -1,3 +1,4 @@
+from django.utils import timezone
 from rest_framework import serializers
 from stats.models import Suscripcion
 
@@ -14,6 +15,11 @@ class SuscripcionSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'fecha_inicio', 'creado_en']
 
     def validate(self, data):
-        if data['fecha_vencimiento'] <= data.get('fecha_inicio', serializers.DateTimeField().to_internal_value(serializers.DateTimeField().now().date())):
-            raise serializers.ValidationError({'fecha_vencimiento': 'La fecha de vencimiento debe ser posterior a la fecha de inicio.'})
+        fecha_actual = timezone.now().date()
+        fecha_inicio = data.get('fecha_inicio', fecha_actual)
+
+        if data['fecha_vencimiento'] <= fecha_inicio:
+            raise serializers.ValidationError({
+                'fecha_vencimiento': 'La fecha de vencimiento debe ser posterior a la fecha de inicio.'
+            })
         return data
