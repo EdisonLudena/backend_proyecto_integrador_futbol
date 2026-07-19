@@ -12,4 +12,4 @@ class AntecedentesSaludViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     pagination_class = StandardPagination
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['tipo_sangre']
+    filterset_fields = ['tipo_sangre', 'jugador']

@@ -14,7 +14,7 @@ class JugadorSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'entidad', 'nombre_entidad', 'categoria', 'nombre_categoria',
             'nombres', 'apellidos', 'fecha_nacimiento', 'foto_url',
-            'numero_camiseta', 'pie_dominante', 'nacionalidad',
+            'numero_camiseta', 'posicion', 'pie_dominante', 'nacionalidad',
             'documento_identidad', 'estado', 'creado_en'
         ]
         read_only_fields = ['id', 'creado_en']

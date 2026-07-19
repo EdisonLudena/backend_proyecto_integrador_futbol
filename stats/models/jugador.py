@@ -36,6 +36,7 @@ class Jugador(models.Model):
     fecha_nacimiento = models.DateField()
     foto_url = models.URLField(max_length=500, blank=True, null=True)
     numero_camiseta = models.SmallIntegerField(blank=True, null=True)
+    posicion = models.CharField(max_length=50, blank=True, null=True)
     pie_dominante = models.CharField(max_length=15, choices=PIES_DOMINANTES, default='Derecho')
     nacionalidad = models.CharField(max_length=80, blank=True, null=True)
     documento_identidad = models.CharField(max_length=30, unique=True, blank=True, null=True)

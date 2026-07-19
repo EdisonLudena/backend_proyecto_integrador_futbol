@@ -20,10 +20,10 @@ class UsuarioManager(BaseUserManager):
     def create_superuser(self, email, nombre_completo, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
-        return self.create_user(email, nombre_completo, 'Coach', password, **extra_fields)
+        return self.create_user(email, nombre_completo, 'Admin', password, **extra_fields)
 
 class Usuario(AbstractBaseUser, PermissionsMixin):
-    TIPOS_USUARIO = [('Coach', 'Coach'), ('Scout', 'Scout'), ('Player', 'Player')]
+    TIPOS_USUARIO = [('Coach', 'Coach'), ('Scout', 'Scout'), ('Player', 'Player'), ('Admin', 'Admin')]
     ESTADOS = [('Activo', 'Activo'), ('Inactivo', 'Inactivo'), ('Suspendido', 'Suspendido')]
     UNIDADES = [('Metrico', 'Metrico'), ('Imperial', 'Imperial')]
 
